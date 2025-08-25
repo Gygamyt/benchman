@@ -55,3 +55,4 @@ pids
 
 apps/backend/node_modules
 packages/eslint-config-custom/node_modules
+/.turbo/

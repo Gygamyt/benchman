@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "main": "index.ts",
   "license": "MIT",
+  "scripts": {
+    "lint": "echo \"eslint-config-custom: no linting needed\" && exit 0"
+  },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^7.13.0",
     "@typescript-eslint/parser": "^7.13.0",

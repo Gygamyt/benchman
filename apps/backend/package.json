@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "nest build",
+    "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "dev": "tsx watch src/main.ts",
     "start:prod": "node dist/main"
   },
