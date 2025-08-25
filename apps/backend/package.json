@@ -5,16 +5,18 @@
   "scripts": {
     "build": "nest build",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
-    "dev": "tsx watch src/main.ts",
+    "dev:tmp": "tsx watch src/main.ts",
+    "dev": "nodemon --watch src --ext ts --exec ts-node src/main.ts",
     "start:prod": "node dist/main"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.6",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.6",
-    "@nestjs/mapped-types": "*",
+    "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/mongoose": "^11.0.3",
     "@nestjs/platform-express": "^11.1.6",
+    "@nestjs/swagger": "^11.2.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "mongoose": "^8.18.0",
@@ -26,6 +28,7 @@
     "@nestjs/schematics": "^11.0.7",
     "@nestjs/testing": "^11.1.6",
     "@types/supertest": "^6.0.3",
+    "nestjs-auto-reflect-metadata-emitter": "^1.2.10",
     "supertest": "^7.1.4",
     "tsconfig": "workspace:*"
   }

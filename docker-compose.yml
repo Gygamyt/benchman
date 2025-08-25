@@ -2,6 +2,21 @@
 version: '3.8'
 
 services:
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./apps/backend/.env
+    volumes:
+      - ./apps/backend/src:/usr/src/app/apps/backend/src
+      - ./packages:/usr/src/app/packages
+    depends_on:
+      - mongo
+      - redis
+
   mongo:
     image: mongo:latest
     container_name: mongo_db

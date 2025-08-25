@@ -1,38 +1,28 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { UserGrade, UserStatus } from './user.enums';
+import { UserBaseEntity } from './user.base.entity';
 
 export type UserDocument = HydratedDocument<User>;
 
-export enum UserStatus {
-    ON_PROJECT = 'On Project',
-    ON_BENCH = 'On Bench',
-}
-
-export enum UserGrade {
-    JUNIOR = 'Junior',
-    MIDDLE = 'Middle',
-    SENIOR = 'Senior',
-    LEAD = 'Lead',
-}
-
 @Schema({ timestamps: true })
-export class User {
-    @Prop({ required: true, trim: true })
+export class User extends UserBaseEntity {
+    @Prop({ required: true, trim: true, type: String })
     name!: string;
 
-    @Prop({ required: true, trim: true })
+    @Prop({ required: true, trim: true, type: String })
     role!: string;
 
-    @Prop({ required: true, enum: UserGrade })
+    @Prop({ required: true, enum: UserGrade, type: String })
     grade!: UserGrade;
 
-    @Prop({ required: true, enum: UserStatus, default: UserStatus.ON_BENCH })
+    @Prop({ required: true, enum: UserStatus, default: UserStatus.ON_BENCH, type: String })
     status!: UserStatus;
 
-    @Prop([String])
-    skills!: string[];
+    @Prop({ type: [String] })
+    skills?: string[];
 
-    @Prop({ trim: true })
+    @Prop({ trim: true, type: String })
     cvLink?: string;
 }
 
