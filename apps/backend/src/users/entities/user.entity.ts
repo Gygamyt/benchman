@@ -2,8 +2,9 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { v4 as uuidv4 } from 'uuid';
 import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, IsUrl, IsUUID, MinLength } from 'class-validator';
-import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
+import { HydratedDocument, PipelineStage, Schema as MongooseSchema } from 'mongoose';
 import { UserGrade, UserStatus } from './user.enums';
+import { Project } from '../../projects/entities/project.entity';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -51,6 +52,10 @@ export class User {
     @IsUrl()
     @IsOptional()
     cvLink?: string;
+
+    @ApiProperty({ type: () => [Project], required: false })
+    @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Project' }] })
+    projects!: Project[];
 
     @ApiProperty()
     createdAt!: Date;
