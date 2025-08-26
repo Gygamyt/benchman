@@ -13,23 +13,9 @@ import {
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from '../../users/entities/user.entity';
+import { ProjectDirection, ProjectStatus } from './project.enum';
 
 export type ProjectDocument = HydratedDocument<Project>;
-
-export enum ProjectStatus {
-    PLANNED = 'Planned',
-    ACTIVE = 'Active',
-    PAUSED = 'Paused',
-    FINISHED = 'Finished',
-}
-
-export enum ProjectDirection {
-    QA = 'QA',
-    AQA = 'AQA',
-    PERFORMANCE = 'Performance Testing',
-    PENETRATION = 'Penetration Testing',
-    SECURITY = 'Security Testing',
-}
 
 @Schema({ timestamps: true })
 export class Project {
@@ -42,18 +28,18 @@ export class Project {
     projectId!: string;
 
     @ApiProperty()
-    @Prop({ required: true, unique: true, trim: true })
+    @Prop({ required: true, unique: true, trim: true, type: String })
     @IsString()
     @MinLength(2)
     name!: string;
 
     @ApiProperty({ enum: ProjectStatus })
-    @Prop({ required: true, enum: ProjectStatus, default: ProjectStatus.PLANNED })
+    @Prop({ required: true, enum: ProjectStatus, default: ProjectStatus.PLANNED, type: String })
     @IsEnum(ProjectStatus)
     status!: ProjectStatus;
 
     @ApiProperty()
-    @Prop({ required: true, trim: true })
+    @Prop({ required: true, trim: true, type: String })
     @IsString()
     @IsNotEmpty()
     domain!: string;
@@ -80,29 +66,29 @@ export class Project {
     @IsOptional()
     endDate?: Date;
 
-    @ApiProperty({ type: () => [User] }) // Связь с пользователями
+    @ApiProperty({ type: () => [User] })
     @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'User' }] })
     team!: User[];
 
     @ApiProperty()
-    @Prop({ trim: true })
+    @Prop({ trim: true, type: String })
     @IsString()
     projectCoordinator!: string;
 
     @ApiProperty({ required: false })
-    @Prop({ trim: true })
+    @Prop({ trim: true, type: String })
     @IsString()
     @IsOptional()
     intermediary?: string;
 
     @ApiProperty({ required: false })
-    @Prop({ trim: true })
+    @Prop({ trim: true, type: String })
     @IsString()
     @IsOptional()
     location?: string;
 
     @ApiProperty()
-    @Prop({ trim: true })
+    @Prop({ trim: true, type: String })
     @IsString()
     language!: string;
 

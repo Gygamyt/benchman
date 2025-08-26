@@ -2,13 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectsController } from '../projects.controller';
 import { ProjectsService } from '../projects.service';
 import { CreateProjectDto } from '../dto/create-project.dto';
-import { ProjectDirection } from '../entities/project.entity';
 
 describe('ProjectsController', () => {
     let controller: ProjectsController;
     let service: ProjectsService;
 
-    // Мок сервиса с jest.fn() для каждого метода
     const mockProjectsService = {
         create: jest.fn(),
         createMany: jest.fn(),

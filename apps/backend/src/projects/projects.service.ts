@@ -19,14 +19,13 @@ export class ProjectsService {
 
         const createdProject = await this.projectModel.create({
             ...projectData,
-            team: team, // Mongoose сам преобразует строки ID в ObjectId
+            team: team,
         });
 
-        // Если в проекте есть команда, обновляем каждого пользователя
         if (team && team.length > 0) {
             await this.userModel.updateMany(
                 { _id: { $in: team } },
-                { $addToSet: { projects: createdProject._id } }, // $addToSet добавляет, только если еще нет
+                { $addToSet: { projects: createdProject._id } },
             );
         }
 
@@ -35,11 +34,29 @@ export class ProjectsService {
 
     async findAll(query?: FindAllProjectsDto): Promise<Project[]> {
         const filter: FilterQuery<ProjectDocument> = {};
-        if (query?.name) filter.name = { $regex: new RegExp(query.name, 'i') };
-        if (query?.status) filter.status = query.status;
-        if (query?.directions?.length) filter.directions = { $in: query.directions };
 
-        // .populate('team') автоматически подтянет полные данные о пользователях в команде
+        if (query?.status) filter.status = query.status;
+        if (query?.domain) filter.domain = query.domain;
+
+        if (query?.name) {
+            filter.name = { $regex: new RegExp(query.name, 'i') };
+        }
+
+        if (query?.directions?.length) {
+            filter.directions = { $in: query.directions };
+        }
+        if (query?.technologies?.length) {
+            filter.technologies = { $in: query.technologies };
+        }
+
+        if (query?.teamMemberId) {
+            filter.team = query.teamMemberId;
+        }
+
+        if (query?.createdAfter) {
+            filter.createdAt = { $gte: query.createdAfter };
+        }
+
         return this.projectModel.find(filter).populate('team').lean().exec();
     }
 
@@ -52,10 +69,7 @@ export class ProjectsService {
     }
 
     async update(id: string, updateProjectDto: UpdateProjectDto): Promise<Project> {
-        // Логика обновления команды сложна (нужно найти удаленных/добавленных),
-        // пока реализуем простое обновление основных полей.
-        // Для обновления команды лучше сделать отдельные эндпоинты, например:
-        // POST /projects/:id/team, DELETE /projects/:id/team/:userId
+        // todo POST /projects/:id/team, DELETE /projects/:id/team/:userId
         const { team, ...projectData } = updateProjectDto;
 
         const updatedProject = await this.projectModel
@@ -77,7 +91,6 @@ export class ProjectsService {
             throw new NotFoundException(`Project with ID "${id}" not found`);
         }
 
-        // Удаляем ссылку на этот проект у всех пользователей, которые в нем состояли
         if (projectToDelete.team && projectToDelete.team.length > 0) {
             await this.userModel.updateMany(
                 { _id: { $in: projectToDelete.team } },

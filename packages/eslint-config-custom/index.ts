@@ -27,4 +27,4 @@ const config = {
     },
 };
 
-module.exports = config; // <-- Ключевое исправление: используем module.exports
+module.exports = config;
