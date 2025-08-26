@@ -21,7 +21,7 @@ import { FindAllUsersDto } from './dto/find-all-users.dto';
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
-    @Post()
+    @Post('create')
     @ApiResponse({ status: 201, description: 'The user has been successfully created.', type: () => User })
     @ApiBody({ type: () => CreateUserDto })
     create(@Body() createUserDto: CreateUserDto): Promise<User> {

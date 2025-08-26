@@ -11,7 +11,7 @@ import { FindAllProjectsDto } from './dto/find-all-projects.dto';
 export class ProjectsController {
     constructor(private readonly projectsService: ProjectsService) {}
 
-    @Post()
+    @Post('create')
     @ApiResponse({ status: 201, description: 'Project created.', type: () => Project })
     @ApiBody({ type: () => CreateProjectDto })
     create(@Body() createProjectDto: CreateProjectDto) {
