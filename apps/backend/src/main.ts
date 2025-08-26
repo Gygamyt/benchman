@@ -7,7 +7,7 @@ import { env } from './config/config';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
-
+    const port = env.APP_PORT
     app.useGlobalPipes(
         new ValidationPipe({
             whitelist: true,
@@ -25,7 +25,7 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api-docs', app, document);
 
-    await app.listen(env.APP_PORT);
+    await app.listen(port);
 }
 
 bootstrap();

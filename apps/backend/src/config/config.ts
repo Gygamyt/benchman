@@ -4,7 +4,11 @@ import { z } from 'zod';
 const envSchema = z.object({
     DATABASE_URL: z.string().url({ message: 'DATABASE_URL must be a valid URL' }),
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-    APP_PORT: z.number().default(3000),
+    APP_PORT: z
+        .string()
+        .transform((val) => Number(val))
+        .refine((val) => !isNaN(val), { message: 'APP_PORT must be a number' })
+        .default(3000),
 });
 
 export const appConfig = registerAs('app', () => {
