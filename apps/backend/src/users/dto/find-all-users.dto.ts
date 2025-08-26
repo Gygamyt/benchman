@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type, Transform } from 'class-transformer';
 import { IsDate, IsEnum, IsOptional, IsString, IsArray } from 'class-validator';
-import { UserGrade, UserStatus } from '../entities/user.enums';
+import { UserGrade, UserStatus, Workload } from '../entities/user.enums';
 
 export class FindAllUsersDto {
     @ApiPropertyOptional({ enum: UserStatus, description: 'Filter by user status' })
@@ -33,6 +33,21 @@ export class FindAllUsersDto {
     @IsOptional()
     @Transform(({ value }) => typeof value === 'string' ? value.split(',') : value)
     skills?: string[];
+
+    @ApiPropertyOptional({ enum: Workload, description: 'Фильтр по уровню загрузки' })
+    @IsEnum(Workload)
+    @IsOptional()
+    workload?: Workload;
+
+    @ApiPropertyOptional({ enum: Workload, description: 'Ru projects filter' })
+    @IsEnum(Workload)
+    @IsOptional()
+    canWorkOnRuProject?: Workload;
+
+    @ApiPropertyOptional({ enum: Workload, description: 'Higher education filter' })
+    @IsEnum(Workload)
+    @IsOptional()
+    hasHigherEducation?: Workload;
 
     @ApiPropertyOptional({ description: 'Find users created after this date', type: Date })
     @IsDate()

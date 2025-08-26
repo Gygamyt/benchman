@@ -9,3 +9,10 @@ export enum UserGrade {
     SENIOR = 'Senior',
     LEAD = 'Lead',
 }
+
+export enum Workload {
+    NONE = 'None',
+    LOW = 'Low',
+    MEDIUM = 'Medium',
+    HIGH = 'High',
+}

@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { v4 as uuidv4 } from 'uuid';
-import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, IsUrl, IsUUID, MinLength } from 'class-validator';
+import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, IsUrl, IsUUID, MinLength } from 'class-validator';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-import { UserGrade, UserStatus } from './user.enums';
+import { UserGrade, UserStatus, Workload } from './user.enums';
 import { Project } from '../../projects/entities/project.entity';
 
 export type UserDocument = HydratedDocument<User>;
@@ -50,6 +50,30 @@ export class User {
     @IsString()
     @IsOptional()
     subTeam?: string;
+
+    @ApiPropertyOptional({ description: 'Готов брать второй проект' })
+    @Prop({ type: Boolean, default: false })
+    @IsBoolean()
+    @IsOptional()
+    canTakeSecondProject?: boolean;
+
+    @ApiPropertyOptional({ description: 'Готов работать на ру проекте' })
+    @Prop({ type: Boolean, default: false })
+    @IsBoolean()
+    @IsOptional()
+    canWorkOnRuProject?: boolean;
+
+    @ApiPropertyOptional({ description: 'Имеется ли высшее образование' })
+    @Prop({ type: Boolean, default: false })
+    @IsBoolean()
+    @IsOptional()
+    hasHigherEducation?: boolean;
+
+    @ApiPropertyOptional({ description: 'Насколько загружен реквестами', enum: Workload, default: Workload.NONE })
+    @Prop({ type: String, enum: Workload, default: Workload.NONE })
+    @IsEnum(Workload)
+    @IsOptional()
+    workload?: Workload;
 
     // @ApiPropertyOptional({ type: () => User, description: "Direct manager (M1)" })
     // @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })

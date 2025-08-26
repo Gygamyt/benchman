@@ -5,4 +5,4 @@ start
   docker-compose up --build
 ```
 
-[swagger](http://localhost:3000/api-docs#/)
+http://localhost:3000/api-docs#/ <--- insert your port instead of 3000

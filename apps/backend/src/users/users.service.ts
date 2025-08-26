@@ -27,7 +27,7 @@ export class UsersService {
      */
     async createMany(createUsersDto: CreateUserDto[]): Promise<User[]> {
         const createdUsers = await this.userModel.insertMany(createUsersDto);
-        return createdUsers.map(user => user.toObject());
+        return createdUsers.map((user) => user.toObject());
     }
 
     /**
@@ -42,6 +42,9 @@ export class UsersService {
         if (query?.grade) filter.grade = query.grade;
         if (query?.role) filter.role = query.role;
         if (query?.name) filter.name = { $regex: new RegExp(query.name, 'i') };
+        if (query?.workload) filter.workload = query.workload;
+        if (query?.canWorkOnRuProject) filter.canWorkOnRuProject = query.canWorkOnRuProject;
+        if (query?.hasHigherEducation) filter.hasHigherEducation = query.hasHigherEducation;
         if (query?.skills?.length) filter.skills = { $in: query.skills };
 
         if (query?.createdAfter || query?.createdBefore) {
@@ -75,10 +78,7 @@ export class UsersService {
      * @throws NotFoundException if the user is not found.
      */
     async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-        const updatedUser = await this.userModel
-            .findByIdAndUpdate(id, updateUserDto, { new: true })
-            .lean()
-            .exec();
+        const updatedUser = await this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true }).lean().exec();
 
         if (!updatedUser) {
             throw new NotFoundException(`User with ID "${id}" not found`);
