@@ -24,7 +24,9 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+      - ./mongod.conf:/etc/mongod.conf
     restart: unless-stopped
+    command: mongod --config /etc/mongod.conf
 
   redis:
     image: redis:latest
