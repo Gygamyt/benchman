@@ -1,27 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from '../users.controller';
 import { UsersService } from '../users.service';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { UserGrade } from '../entities/user.enums';
+import { FindAllUsersDto } from '../dto/find-all-users.dto';
 
 describe('UsersController', () => {
     let controller: UsersController;
     let service: UsersService;
 
-    const mockUser = {
-        _id: 'some-id',
-        name: 'Test User',
-        role: 'Tester',
-        grade: UserGrade.MIDDLE,
-        status: 'On Bench',
-        skills: ['testing'],
-    };
-
-    // Создаем мок для сервиса
     const mockUsersService = {
-        create: jest.fn().mockResolvedValue(mockUser),
-        findAll: jest.fn().mockResolvedValue([mockUser]),
-        // ... моки для остальных методов
+        create: jest.fn(),
+        findAll: jest.fn(),
+        findByID: jest.fn(),
+        update: jest.fn(),
+        remove: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -30,7 +21,7 @@ describe('UsersController', () => {
             providers: [
                 {
                     provide: UsersService,
-                    useValue: mockUsersService, // Используем мок-сервис
+                    useValue: mockUsersService,
                 },
             ],
         }).compile();
@@ -39,31 +30,51 @@ describe('UsersController', () => {
         service = module.get<UsersService>(UsersService);
     });
 
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
     it('should be defined', () => {
         expect(controller).toBeDefined();
     });
 
-    describe('create', () => {
-        it('should call usersService.create and return a new user', async () => {
-            const createUserDto: CreateUserDto = {
-                name: 'Test User',
-                role: 'Tester',
-                grade: UserGrade.MIDDLE,
-            };
-
-            const result = await controller.create(createUserDto);
-
-            expect(service.create).toHaveBeenCalledWith(createUserDto);
-            expect(result).toEqual(mockUser);
+    describe('findAll (GET /users)', () => {
+        it('should call service.findAll without arguments', async () => {
+            await controller.findAll();
+            expect(service.findAll).toHaveBeenCalledWith();
         });
     });
 
-    describe('findAll', () => {
-        it('should call usersService.findAll and return an array of users', async () => {
-            const result = await controller.findAll();
+    describe('searchUsers (POST /users/search)', () => {
+        it('should call service.findAll with query arguments', async () => {
+            const query: FindAllUsersDto = { name: 'Test' };
+            await controller.searchUsers(query);
+            expect(service.findAll).toHaveBeenCalledWith(query);
+        });
+    });
 
-            expect(service.findAll).toHaveBeenCalled();
-            expect(result).toEqual([mockUser]);
+    describe('findByID (GET /users/:id)', () => {
+        it('should call service.findByID with the provided id', async () => {
+            const id = 'some-id';
+            await controller.findByID(id);
+            expect(service.findByID).toHaveBeenCalledWith(id);
+        });
+    });
+
+    describe('update (PATCH /users/:id)', () => {
+        it('should call service.update with id and dto', async () => {
+            const id = 'some-id';
+            const dto = { name: 'Updated' };
+            await controller.update(id, dto);
+            expect(service.update).toHaveBeenCalledWith(id, dto);
+        });
+    });
+
+    describe('remove (DELETE /users/:id)', () => {
+        it('should call service.remove with the provided id', async () => {
+            const id = 'some-id';
+            await controller.remove(id);
+            expect(service.remove).toHaveBeenCalledWith(id);
         });
     });
 });

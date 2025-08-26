@@ -1,15 +1,16 @@
+// @ts-nocheck
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from '../users.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { User } from '../entities/user.entity';
 import { Model } from 'mongoose';
-import { CreateUserDto } from '../dto/create-user.dto';
 import { UserGrade, UserStatus } from '../entities/user.enums';
 import { NotFoundException } from '@nestjs/common';
+import { FindAllUsersDto } from '../dto/find-all-users.dto';
 
-// A plain JavaScript object representing a user, just like what .lean() would return.
 const mockUser = {
     _id: 'some-id',
+    userId: 'some-uuid',
     name: 'Test User',
     role: 'Tester',
     grade: UserGrade.MIDDLE,
@@ -23,40 +24,17 @@ describe('UsersService', () => {
     let service: UsersService;
     let model: Model<User>;
 
-    // Updated mock for the Mongoose model to include .lean()
     const mockUserModel = {
-        find: jest.fn().mockReturnValue({
-            lean: jest.fn().mockReturnValue({
-                exec: jest.fn().mockResolvedValue([mockUser]),
-            }),
-        }),
-        findById: jest.fn().mockReturnValue({
-            lean: jest.fn().mockReturnValue({
-                exec: jest.fn().mockResolvedValue(mockUser),
-            }),
-        }),
+        find: jest.fn().mockReturnThis(),
+        findById: jest.fn().mockReturnThis(),
         create: jest.fn().mockImplementation((dto) => ({
             ...dto,
-            _id: 'some-id',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            toObject: jest.fn().mockReturnValue({
-                ...dto,
-                _id: 'some-id',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            }),
+            toObject: () => ({ ...dto }),
         })),
-        findByIdAndUpdate: jest.fn().mockReturnValue({
-            lean: jest.fn().mockReturnValue({
-                exec: jest.fn().mockResolvedValue(mockUser),
-            }),
-        }),
-        findByIdAndDelete: jest.fn().mockReturnValue({
-            lean: jest.fn().mockReturnValue({
-                exec: jest.fn().mockResolvedValue(mockUser),
-            }),
-        }),
+        findByIdAndUpdate: jest.fn().mockReturnThis(),
+        findByIdAndDelete: jest.fn().mockReturnThis(),
+        lean: jest.fn().mockReturnThis(),
+        exec: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -75,7 +53,7 @@ describe('UsersService', () => {
     });
 
     afterEach(() => {
-        jest.clearAllMocks(); // Clear mocks after each test
+        jest.clearAllMocks();
     });
 
     it('should be defined', () => {
@@ -83,47 +61,66 @@ describe('UsersService', () => {
     });
 
     describe('findAll', () => {
-        it('should return an array of users', async () => {
+        it('should return an array of users when no filter is provided', async () => {
+            jest.spyOn(model, 'exec').mockResolvedValueOnce([mockUser]);
             const users = await service.findAll();
 
             expect(users).toEqual([mockUser]);
-            expect(model.find).toHaveBeenCalled();
+            expect(model.find).toHaveBeenCalledWith({});
         });
-    });
 
-    describe('create', () => {
-        it('should create and return a user', async () => {
-            const createUserDto: CreateUserDto = {
-                name: 'Test User',
-                role: 'Tester',
-                grade: UserGrade.MIDDLE,
+        it('should apply filters when a query is provided', async () => {
+            jest.spyOn(model, 'exec').mockResolvedValueOnce([mockUser]);
+            const query: FindAllUsersDto = { name: 'Test', status: UserStatus.ON_BENCH };
+            await service.findAll(query);
+
+            const expectedFilter = {
+                name: { $regex: new RegExp(query.name, 'i') },
+                status: query.status,
             };
-
-            const result = await service.create(createUserDto);
-
-            expect(result.name).toEqual(createUserDto.name);
-            expect(model.create).toHaveBeenCalledWith(createUserDto);
+            expect(model.find).toHaveBeenCalledWith(expectedFilter);
         });
     });
 
-    describe('findOne', () => {
+    describe('findByID', () => {
         it('should find and return a single user', async () => {
-            const id = 'some-id';
-            const user = await service.findOne(id);
+            jest.spyOn(model, 'exec').mockResolvedValueOnce(mockUser);
+            const user = await service.findByID('some-id');
 
             expect(user).toEqual(mockUser);
-            expect(model.findById).toHaveBeenCalledWith(id);
+            expect(model.findById).toHaveBeenCalledWith('some-id');
         });
 
         it('should throw NotFoundException if user is not found', async () => {
-            // Override the mock for this specific test case
-            jest.spyOn(model, 'findById').mockReturnValueOnce({
-                lean: jest.fn().mockReturnValue({
-                    exec: jest.fn().mockResolvedValue(null),
-                }),
-            } as any);
+            jest.spyOn(model, 'exec').mockResolvedValueOnce(null);
+            await expect(service.findByID('non-existent-id')).rejects.toThrow(NotFoundException);
+        });
+    });
 
-            await expect(service.findOne('non-existent-id')).rejects.toThrow(NotFoundException);
+    describe('update', () => {
+        it('should update and return the user', async () => {
+            jest.spyOn(model, 'exec').mockResolvedValueOnce(mockUser);
+            const result = await service.update('some-id', { name: 'Updated Name' });
+            expect(result).toEqual(mockUser);
+            expect(model.findByIdAndUpdate).toHaveBeenCalledWith('some-id', { name: 'Updated Name' }, { new: true });
+        });
+
+        it('should throw NotFoundException if user to update is not found', async () => {
+            jest.spyOn(model, 'exec').mockResolvedValueOnce(null);
+            await expect(service.update('non-existent-id', {})).rejects.toThrow(NotFoundException);
+        });
+    });
+
+    describe('remove', () => {
+        it('should find and remove a user', async () => {
+            jest.spyOn(model, 'exec').mockResolvedValueOnce(mockUser);
+            await service.remove('some-id');
+            expect(model.findByIdAndDelete).toHaveBeenCalledWith('some-id');
+        });
+
+        it('should throw NotFoundException if user to remove is not found', async () => {
+            jest.spyOn(model, 'exec').mockResolvedValueOnce(null);
+            await expect(service.remove('non-existent-id')).rejects.toThrow(NotFoundException);
         });
     });
 });

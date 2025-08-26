@@ -1,14 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import {
-    IsArray,
-    IsEnum,
-    IsNotEmpty,
-    IsOptional,
-    IsString,
-    IsUrl,
-    MinLength,
-} from 'class-validator';
+import { v4 as uuidv4 } from 'uuid';
+import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, IsUrl, IsUUID, MinLength } from 'class-validator';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { UserGrade, UserStatus } from './user.enums';
 
@@ -18,6 +11,11 @@ export type UserDocument = HydratedDocument<User>;
 export class User {
     @ApiProperty({ description: 'Уникальный ID пользователя', example: '65a034f3b2667181314f271f' })
     _id!: MongooseSchema.Types.ObjectId;
+
+    @ApiProperty({ description: 'Уникальный идентификатор UUID', example: 'd1a6d7a0-9f3c-4a2b-8b1e-3a9f3d9f3d9f' })
+    @Prop({ type: String, unique: true, default: uuidv4 }) // <-- Наше новое поле
+    @IsUUID()
+    userId!: string;
 
     @ApiProperty({ description: 'Имя пользователя', example: 'Иван Иванов' })
     @Prop({ required: true, trim: true, type: String, unique: true })
