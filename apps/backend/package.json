@@ -7,7 +7,10 @@
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "dev:tmp": "tsx watch src/main.ts",
     "dev": "nodemon --watch src --ext ts --exec ts-node src/main.ts",
-    "start:prod": "node dist/main"
+    "start:prod": "node dist/main",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.6",
@@ -27,9 +30,11 @@
     "@nestjs/cli": "^11.0.10",
     "@nestjs/schematics": "^11.0.7",
     "@nestjs/testing": "^11.1.6",
+    "@types/jest": "^29.5.12",
     "@types/supertest": "^6.0.3",
     "nestjs-auto-reflect-metadata-emitter": "^1.2.10",
     "supertest": "^7.1.4",
+    "ts-jest": "^29.4.1",
     "tsconfig": "workspace:*"
   }
 }
