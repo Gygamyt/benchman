@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type, Transform } from 'class-transformer';
-import { IsDate, IsEnum, IsOptional, IsString, IsArray } from 'class-validator';
+import { IsDate, IsEnum, IsOptional, IsString, IsArray, IsBoolean } from 'class-validator';
 import { EmployeeGrade, EmployeeStatus, Workload } from '../entities/employee.enums';
 
 export class FindAllEmployeesDto {
@@ -26,28 +26,30 @@ export class FindAllEmployeesDto {
 
     @ApiPropertyOptional({
         description: 'Filter by skills (comma-separated)',
-        example: 'TypeScript,NestJS'
+        example: 'TypeScript,NestJS',
     })
     @IsArray()
     @IsString({ each: true })
     @IsOptional()
-    @Transform(({ value }) => typeof value === 'string' ? value.split(',') : value)
+    @Transform(({ value }) => (typeof value === 'string' ? value.split(',') : value))
     skills?: string[];
 
-    @ApiPropertyOptional({ enum: Workload, description: 'Фильтр по уровню загрузки' })
+    @ApiPropertyOptional({ enum: Workload, description: 'Filter by workload' })
     @IsEnum(Workload)
     @IsOptional()
     workload?: Workload;
 
-    @ApiPropertyOptional({ enum: Workload, description: 'Ru projects filter' })
-    @IsEnum(Workload)
+    @ApiPropertyOptional({ type: Boolean, description: 'Filter by readiness to work on RU projects' })
+    @IsBoolean()
+    @Transform(({ value }) => value === 'true' || value === true)
     @IsOptional()
-    canWorkOnRuProject?: Workload;
+    canWorkOnRuProject?: boolean;
 
-    @ApiPropertyOptional({ enum: Workload, description: 'Higher education filter' })
-    @IsEnum(Workload)
+    @ApiPropertyOptional({ type: Boolean, description: 'Filter by higher education' })
+    @IsBoolean()
+    @Transform(({ value }) => value === 'true' || value === true)
     @IsOptional()
-    hasHigherEducation?: Workload;
+    hasHigherEducation?: boolean;
 
     @ApiPropertyOptional({ description: 'Find employees created after this date', type: Date })
     @IsDate()
@@ -60,4 +62,13 @@ export class FindAllEmployeesDto {
     @Type(() => Date)
     @IsOptional()
     createdBefore?: Date;
+
+    @ApiPropertyOptional({
+        description: 'Set to true to populate related entities (projects, requests)',
+        type: Boolean,
+    })
+    @IsBoolean()
+    @Transform(({ value }) => value === 'true' || value === true)
+    @IsOptional()
+    populate?: boolean;
 }

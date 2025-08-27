@@ -17,5 +17,6 @@ import { Employee, EmployeeSchema } from '../employees/entities/employee.entity'
     ],
     controllers: [RequestsController],
     providers: [RequestsService, IsInDictionaryConstraint],
+    exports: [RequestsService],
 })
 export class RequestsModule {}

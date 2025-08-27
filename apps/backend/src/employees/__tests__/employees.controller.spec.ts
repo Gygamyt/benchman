@@ -39,9 +39,25 @@ describe('EmployeesController', () => {
     });
 
     describe('findAll (GET /employees)', () => {
-        it('should call service.findAll without arguments', async () => {
-            await controller.findAll();
-            expect(service.findAll).toHaveBeenCalledWith();
+        it('should call service.findAll with the query DTO', async () => {
+            const query: FindAllEmployeesDto = { name: 'Test' };
+            await controller.findAll(query);
+            expect(service.findAll).toHaveBeenCalledWith(query);
+        });
+    });
+
+    describe('findByID (GET /employees/:id)', () => {
+        it('should call service.findByID with id and populate flag', async () => {
+            const id = 'some-id';
+            const populate = true;
+            await controller.findByID(id, populate);
+            expect(service.findByID).toHaveBeenCalledWith(id, populate);
+        });
+
+        it('should call service.findByID with id and without populate flag', async () => {
+            const id = 'some-id';
+            await controller.findByID(id, undefined);
+            expect(service.findByID).toHaveBeenCalledWith(id, undefined);
         });
     });
 
@@ -50,14 +66,6 @@ describe('EmployeesController', () => {
             const query: FindAllEmployeesDto = { name: 'Test' };
             await controller.searchUsers(query);
             expect(service.findAll).toHaveBeenCalledWith(query);
-        });
-    });
-
-    describe('findByID (GET /employees/:id)', () => {
-        it('should call service.findByID with the provided id', async () => {
-            const id = 'some-id';
-            await controller.findByID(id);
-            expect(service.findByID).toHaveBeenCalledWith(id);
         });
     });
 

@@ -5,10 +5,14 @@ import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Employee, EmployeeDocument } from './entities/employee.entity';
 import { FindAllEmployeesDto } from './dto/find-all-employees.dto';
+import { RequestsService } from '../requests/requests.service';
 
 @Injectable()
 export class EmployeesService {
-    constructor(@InjectModel(Employee.name) private employeeModel: Model<EmployeeDocument>) {}
+    constructor(
+        @InjectModel(Employee.name) private employeeModel: Model<EmployeeDocument>,
+        private readonly requestsService: RequestsService,
+    ) {}
 
     /**
      * Creates a single new employee.
@@ -32,38 +36,55 @@ export class EmployeesService {
 
     /**
      * Finds employees based on optional filter criteria.
-     * @param query - The DTO containing filter parameters.
+     * Can optionally populate related projects and requests.
+     * @param queryDto - The DTO containing filter and populate parameters.
      * @returns A list of employees.
      */
-    async findAll(query?: FindAllEmployeesDto): Promise<Employee[]> {
+    async findAll(queryDto?: FindAllEmployeesDto): Promise<Employee[]> {
+        const { populate, ...filters } = queryDto || {};
         const filter: FilterQuery<EmployeeDocument> = {};
 
-        if (query?.status) filter.status = query.status;
-        if (query?.grade) filter.grade = query.grade;
-        if (query?.role) filter.role = query.role;
-        if (query?.name) filter.name = { $regex: new RegExp(query.name, 'i') };
-        if (query?.workload) filter.workload = query.workload;
-        if (query?.canWorkOnRuProject) filter.canWorkOnRuProject = query.canWorkOnRuProject;
-        if (query?.hasHigherEducation) filter.hasHigherEducation = query.hasHigherEducation;
-        if (query?.skills?.length) filter.skills = { $in: query.skills };
+        if (filters.status) filter.status = filters.status;
+        if (filters.grade) filter.grade = filters.grade;
+        if (filters.role) filter.role = filters.role;
+        if (filters.name) filter.name = { $regex: new RegExp(filters.name, 'i') };
+        if (filters.workload) filter.workload = filters.workload;
+        if (filters.canWorkOnRuProject) filter.canWorkOnRuProject = filters.canWorkOnRuProject;
+        if (filters.hasHigherEducation) filter.hasHigherEducation = filters.hasHigherEducation;
+        if (filters.skills?.length) filter.skills = { $in: filters.skills };
 
-        if (query?.createdAfter || query?.createdBefore) {
+        if (filters.createdAfter || filters.createdBefore) {
             filter.createdAt = {};
-            if (query.createdAfter) filter.createdAt.$gte = query.createdAfter;
-            if (query.createdBefore) filter.createdAt.$lte = query.createdBefore;
+            if (filters.createdAfter) filter.createdAt.$gte = filters.createdAfter;
+            if (filters.createdBefore) filter.createdAt.$lte = filters.createdBefore;
         }
 
-        return this.employeeModel.find(filter).lean().exec();
+        const mongooseQuery = this.employeeModel.find(filter);
+
+        if (populate) {
+            mongooseQuery.populate('projects').populate('requests');
+        }
+
+        return mongooseQuery.lean().exec();
     }
 
     /**
      * Finds a single employee by their ID.
+     * Can optionally populate related projects and requests.
      * @param id - The ID of the employee to find.
+     * @param populate - A boolean to indicate if related data should be populated.
      * @returns The found employee.
      * @throws NotFoundException if the employee is not found.
      */
-    async findByID(id: string): Promise<Employee> {
-        const employee = await this.employeeModel.findById(id).lean().exec();
+    async findByID(id: string, populate = false): Promise<Employee> {
+        let query = this.employeeModel.findById(id);
+
+        if (populate) {
+            query = query.populate('projects').populate('requests');
+        }
+
+        const employee = await query.lean().exec();
+
         if (!employee) {
             throw new NotFoundException(`Employee with ID "${id}" not found`);
         }
@@ -96,5 +117,13 @@ export class EmployeesService {
         if (!result) {
             throw new NotFoundException(`Employee with ID "${id}" not found`);
         }
+    }
+
+    async assignRequest(employeeId: string, requestId: string): Promise<void> {
+        return this.requestsService.assignEmployee(requestId, employeeId);
+    }
+
+    async removeRequest(employeeId: string, requestId: string): Promise<void> {
+        return this.requestsService.removeEmployee(requestId, employeeId);
     }
 }

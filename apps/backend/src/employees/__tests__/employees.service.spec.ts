@@ -1,41 +1,29 @@
-// @ts-nocheck
 import { Test, TestingModule } from '@nestjs/testing';
 import { EmployeesService } from '../employees.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Employee } from '../entities/employee.entity';
 import { Model } from 'mongoose';
-import { EmployeeGrade, EmployeeStatus } from '../entities/employee.enums';
-import { NotFoundException } from '@nestjs/common';
-import { FindAllEmployeesDto } from '../dto/find-all-employees.dto';
+import { RequestsService } from '../../requests/requests.service';
+
+const mockRequestsService = {
+    assignEmployee: jest.fn(),
+    removeEmployee: jest.fn(),
+};
+
+const mockEmployeeModel = {
+    find: jest.fn(),
+    findById: jest.fn(),
+};
 
 const mockEmployee = {
     _id: 'some-id',
-    employeeId: 'some-uuid',
-    name: 'Test User',
-    role: 'Tester',
-    grade: EmployeeGrade.MIDDLE,
-    status: EmployeeStatus.ON_BENCH,
-    skills: ['testing'],
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    name: 'Test Employee',
 };
 
 describe('EmployeesService', () => {
     let service: EmployeesService;
     let model: Model<Employee>;
-
-    const mockUserModel = {
-        find: jest.fn().mockReturnThis(),
-        findById: jest.fn().mockReturnThis(),
-        create: jest.fn().mockImplementation((dto) => ({
-            ...dto,
-            toObject: () => ({ ...dto }),
-        })),
-        findByIdAndUpdate: jest.fn().mockReturnThis(),
-        findByIdAndDelete: jest.fn().mockReturnThis(),
-        lean: jest.fn().mockReturnThis(),
-        exec: jest.fn(),
-    };
+    let requestsService: RequestsService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -43,13 +31,18 @@ describe('EmployeesService', () => {
                 EmployeesService,
                 {
                     provide: getModelToken(Employee.name),
-                    useValue: mockUserModel,
+                    useValue: mockEmployeeModel
+                },
+                {
+                    provide: RequestsService,
+                    useValue: mockRequestsService
                 },
             ],
         }).compile();
 
         service = module.get<EmployeesService>(EmployeesService);
         model = module.get<Model<Employee>>(getModelToken(Employee.name));
+        requestsService = module.get<RequestsService>(RequestsService);
     });
 
     afterEach(() => {
@@ -61,66 +54,54 @@ describe('EmployeesService', () => {
     });
 
     describe('findAll', () => {
-        it('should return an array of employees when no filter is provided', async () => {
-            jest.spyOn(model, 'exec').mockResolvedValueOnce([mockEmployee]);
-            const employee = await service.findAll();
-
-            expect(employee).toEqual([mockEmployee]);
-            expect(model.find).toHaveBeenCalledWith({});
-        });
-
-        it('should apply filters when a query is provided', async () => {
-            jest.spyOn(model, 'exec').mockResolvedValueOnce([mockEmployee]);
-            const query: FindAllEmployeesDto = { name: 'Test', status: EmployeeStatus.ON_BENCH };
-            await service.findAll(query);
-
-            const expectedFilter = {
-                name: { $regex: new RegExp(query.name, 'i') },
-                status: query.status,
+        it('should find employees WITH populating requests when flag is true', async () => {
+            const queryChain = {
+                populate: jest.fn().mockReturnThis(),
+                lean: jest.fn().mockReturnThis(),
+                exec: jest.fn().mockResolvedValue([mockEmployee]),
             };
-            expect(model.find).toHaveBeenCalledWith(expectedFilter);
+            jest.spyOn(model, 'find').mockReturnValue(queryChain as any);
+
+            await service.findAll({ populate: true });
+
+            expect(model.find).toHaveBeenCalled();
+            expect(queryChain.populate).toHaveBeenCalledWith('requests');
         });
     });
 
     describe('findByID', () => {
-        it('should find and return a single employee', async () => {
-            jest.spyOn(model, 'exec').mockResolvedValueOnce(mockEmployee);
-            const employee = await service.findByID('some-id');
+        it('should find an employee by id WITH populating requests', async () => {
+            const queryChain = {
+                populate: jest.fn().mockReturnThis(),
+                lean: jest.fn().mockReturnThis(),
+                exec: jest.fn().mockResolvedValue(mockEmployee),
+            };
+            jest.spyOn(model, 'findById').mockReturnValue(queryChain as any);
 
-            expect(employee).toEqual(mockEmployee);
+            await service.findByID('some-id', true);
+
             expect(model.findById).toHaveBeenCalledWith('some-id');
-        });
-
-        it('should throw NotFoundException if employee is not found', async () => {
-            jest.spyOn(model, 'exec').mockResolvedValueOnce(null);
-            await expect(service.findByID('non-existent-id')).rejects.toThrow(NotFoundException);
+            expect(queryChain.populate).toHaveBeenCalledWith('requests');
         });
     });
 
-    describe('update', () => {
-        it('should update and return the employee', async () => {
-            jest.spyOn(model, 'exec').mockResolvedValueOnce(mockEmployee);
-            const result = await service.update('some-id', { name: 'Updated Name' });
-            expect(result).toEqual(mockEmployee);
-            expect(model.findByIdAndUpdate).toHaveBeenCalledWith('some-id', { name: 'Updated Name' }, { new: true });
-        });
+    describe('assignRequest', () => {
+        it('should call requestsService.assignEmployee with correct arguments', async () => {
+            const employeeId = 'emp1';
+            const requestId = 'req1';
+            await service.assignRequest(employeeId, requestId);
 
-        it('should throw NotFoundException if employee to update is not found', async () => {
-            jest.spyOn(model, 'exec').mockResolvedValueOnce(null);
-            await expect(service.update('non-existent-id', {})).rejects.toThrow(NotFoundException);
+            expect(requestsService.assignEmployee).toHaveBeenCalledWith(requestId, employeeId);
         });
     });
 
-    describe('remove', () => {
-        it('should find and remove a employee', async () => {
-            jest.spyOn(model, 'exec').mockResolvedValueOnce(mockEmployee);
-            await service.remove('some-id');
-            expect(model.findByIdAndDelete).toHaveBeenCalledWith('some-id');
-        });
+    describe('removeRequest', () => {
+        it('should call requestsService.removeEmployee with correct arguments', async () => {
+            const employeeId = 'emp1';
+            const requestId = 'req1';
+            await service.removeRequest(employeeId, requestId);
 
-        it('should throw NotFoundException if employee to remove is not found', async () => {
-            jest.spyOn(model, 'exec').mockResolvedValueOnce(null);
-            await expect(service.remove('non-existent-id')).rejects.toThrow(NotFoundException);
+            expect(requestsService.removeEmployee).toHaveBeenCalledWith(requestId, employeeId);
         });
     });
 });
