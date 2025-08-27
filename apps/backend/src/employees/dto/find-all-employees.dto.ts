@@ -1,25 +1,25 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type, Transform } from 'class-transformer';
 import { IsDate, IsEnum, IsOptional, IsString, IsArray } from 'class-validator';
-import { UserGrade, UserStatus, Workload } from '../entities/user.enums';
+import { EmployeeGrade, EmployeeStatus, Workload } from '../entities/employee.enums';
 
-export class FindAllUsersDto {
-    @ApiPropertyOptional({ enum: UserStatus, description: 'Filter by user status' })
-    @IsEnum(UserStatus)
+export class FindAllEmployeesDto {
+    @ApiPropertyOptional({ enum: EmployeeStatus, description: 'Filter by employee status' })
+    @IsEnum(EmployeeStatus)
     @IsOptional()
-    status?: UserStatus;
+    status?: EmployeeStatus;
 
-    @ApiPropertyOptional({ enum: UserGrade, description: 'Filter by user grade' })
-    @IsEnum(UserGrade)
+    @ApiPropertyOptional({ enum: EmployeeGrade, description: 'Filter by employee grade' })
+    @IsEnum(EmployeeGrade)
     @IsOptional()
-    grade?: UserGrade;
+    grade?: EmployeeGrade;
 
-    @ApiPropertyOptional({ description: 'Filter by user role' })
+    @ApiPropertyOptional({ description: 'Filter by employee role' })
     @IsString()
     @IsOptional()
     role?: string;
 
-    @ApiPropertyOptional({ description: 'Find users by partial name match (case-insensitive)' })
+    @ApiPropertyOptional({ description: 'Find employees by partial name match (case-insensitive)' })
     @IsString()
     @IsOptional()
     name?: string;
@@ -49,13 +49,13 @@ export class FindAllUsersDto {
     @IsOptional()
     hasHigherEducation?: Workload;
 
-    @ApiPropertyOptional({ description: 'Find users created after this date', type: Date })
+    @ApiPropertyOptional({ description: 'Find employees created after this date', type: Date })
     @IsDate()
     @Type(() => Date)
     @IsOptional()
     createdAfter?: Date;
 
-    @ApiPropertyOptional({ description: 'Find users created before this date', type: Date })
+    @ApiPropertyOptional({ description: 'Find employees created before this date', type: Date })
     @IsDate()
     @Type(() => Date)
     @IsOptional()

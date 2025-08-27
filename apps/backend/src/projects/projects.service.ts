@@ -4,14 +4,14 @@ import { FilterQuery, Model } from 'mongoose';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project, ProjectDocument } from './entities/project.entity';
-import { User, UserDocument } from '../users/entities/user.entity';
+import { Employee, EmployeeDocument } from '../employees/entities/employee.entity';
 import { FindAllProjectsDto } from './dto/find-all-projects.dto';
 
 @Injectable()
 export class ProjectsService {
     constructor(
         @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
-        @InjectModel(User.name) private userModel: Model<UserDocument>,
+        @InjectModel(Employee.name) private employeeModel: Model<EmployeeDocument>,
     ) {}
 
     async create(createProjectDto: CreateProjectDto): Promise<Project> {
@@ -23,7 +23,7 @@ export class ProjectsService {
         });
 
         if (team && team.length > 0) {
-            await this.userModel.updateMany(
+            await this.employeeModel.updateMany(
                 { _id: { $in: team } },
                 { $addToSet: { projects: createdProject._id } },
             );
@@ -69,7 +69,7 @@ export class ProjectsService {
     }
 
     async update(id: string, updateProjectDto: UpdateProjectDto): Promise<Project> {
-        // todo POST /projects/:id/team, DELETE /projects/:id/team/:userId
+        // todo POST /projects/:id/team, DELETE /projects/:id/team/:employeeId
         const { team, ...projectData } = updateProjectDto;
 
         const updatedProject = await this.projectModel
@@ -92,7 +92,7 @@ export class ProjectsService {
         }
 
         if (projectToDelete.team && projectToDelete.team.length > 0) {
-            await this.userModel.updateMany(
+            await this.employeeModel.updateMany(
                 { _id: { $in: projectToDelete.team } },
                 { $pull: { projects: projectToDelete._id } },
             );

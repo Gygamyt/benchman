@@ -19,7 +19,7 @@ async function bootstrap() {
     // ----- SWAGGER ----- //
     const config = new DocumentBuilder()
         .setTitle('IT Department Manager API')
-        .setDescription('API for managing users and projects')
+        .setDescription('API for managing employees and projects')
         .setVersion('1.0')
         .build();
     const document = SwaggerModule.createDocument(app, config);

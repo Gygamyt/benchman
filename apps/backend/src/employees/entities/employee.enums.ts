@@ -1,9 +1,9 @@
-export enum UserStatus {
+export enum EmployeeStatus {
     ON_PROJECT = 'On Project',
     ON_BENCH = 'On Bench',
 }
 
-export enum UserGrade {
+export enum EmployeeGrade {
     JUNIOR = 'Junior',
     MIDDLE = 'Middle',
     SENIOR = 'Senior',

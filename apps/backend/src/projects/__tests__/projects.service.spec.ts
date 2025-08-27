@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectsService } from '../projects.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Project } from '../entities/project.entity';
-import { User } from '../../users/entities/user.entity';
+import { Employee } from '../../employees/entities/employee.entity';
 import { Model } from 'mongoose';
 import { NotFoundException } from '@nestjs/common';
 
@@ -12,16 +12,10 @@ const mockProject = {
     team: ['mockUserId1'],
     toObject: () => mockProject,
 };
-
-const mockUser = {
-    _id: 'mockUserId1',
-    name: 'Test User',
-};
-
 describe('ProjectsService', () => {
     let service: ProjectsService;
     let projectModel: Model<Project>;
-    let userModel: Model<User>;
+    let employeeModel: Model<Employee>;
 
     const mockProjectModel = {
         create: jest.fn().mockResolvedValue(mockProject),
@@ -41,13 +35,13 @@ describe('ProjectsService', () => {
             providers: [
                 ProjectsService,
                 { provide: getModelToken(Project.name), useValue: mockProjectModel },
-                { provide: getModelToken(User.name), useValue: mockUserModel },
+                { provide: getModelToken(Employee.name), useValue: mockUserModel },
             ],
         }).compile();
 
         service = module.get<ProjectsService>(ProjectsService);
         projectModel = module.get<Model<Project>>(getModelToken(Project.name));
-        userModel = module.get<Model<User>>(getModelToken(User.name));
+        employeeModel = module.get<Model<Employee>>(getModelToken(Employee.name));
     });
 
     afterEach(() => {
@@ -59,12 +53,12 @@ describe('ProjectsService', () => {
     });
 
     describe('create', () => {
-        it('should create a project and update users', async () => {
-            const createDto = { name: 'New Project', team: ['mockUserId1'] };
+        it('should create a project and update employees', async () => {
+            const createDto = { name: 'New Project', team: ['mockEmployeeId1'] };
             const result = await service.create(createDto as any);
 
             expect(projectModel.create).toHaveBeenCalled();
-            expect(userModel.updateMany).toHaveBeenCalledWith(
+            expect(employeeModel.updateMany).toHaveBeenCalledWith(
                 { _id: { $in: createDto.team } },
                 { $addToSet: { projects: mockProject._id } },
             );
@@ -73,7 +67,7 @@ describe('ProjectsService', () => {
     });
 
     describe('remove', () => {
-        it('should remove a project and update users', async () => {
+        it('should remove a project and update employees', async () => {
             jest.spyOn(projectModel, 'findByIdAndDelete').mockReturnValue({
                 lean: () => ({
                     exec: jest.fn().mockResolvedValue(mockProject),
@@ -83,7 +77,7 @@ describe('ProjectsService', () => {
             await service.remove('mockProjectId');
 
             expect(projectModel.findByIdAndDelete).toHaveBeenCalledWith('mockProjectId');
-            expect(userModel.updateMany).toHaveBeenCalledWith(
+            expect(employeeModel.updateMany).toHaveBeenCalledWith(
                 { _id: { $in: mockProject.team } },
                 { $pull: { projects: mockProject._id } },
             );

@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersController } from '../users.controller';
-import { UsersService } from '../users.service';
-import { FindAllUsersDto } from '../dto/find-all-users.dto';
+import { EmployeesController } from '../employees.controller';
+import { EmployeesService } from '../employees.service';
+import { FindAllEmployeesDto } from '../dto/find-all-employees.dto';
 
-describe('UsersController', () => {
-    let controller: UsersController;
-    let service: UsersService;
+describe('EmployeesController', () => {
+    let controller: EmployeesController;
+    let service: EmployeesService;
 
     const mockUsersService = {
         create: jest.fn(),
@@ -17,17 +17,17 @@ describe('UsersController', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            controllers: [UsersController],
+            controllers: [EmployeesController],
             providers: [
                 {
-                    provide: UsersService,
+                    provide: EmployeesService,
                     useValue: mockUsersService,
                 },
             ],
         }).compile();
 
-        controller = module.get<UsersController>(UsersController);
-        service = module.get<UsersService>(UsersService);
+        controller = module.get<EmployeesController>(EmployeesController);
+        service = module.get<EmployeesService>(EmployeesService);
     });
 
     afterEach(() => {
@@ -38,22 +38,22 @@ describe('UsersController', () => {
         expect(controller).toBeDefined();
     });
 
-    describe('findAll (GET /users)', () => {
+    describe('findAll (GET /employees)', () => {
         it('should call service.findAll without arguments', async () => {
             await controller.findAll();
             expect(service.findAll).toHaveBeenCalledWith();
         });
     });
 
-    describe('searchUsers (POST /users/search)', () => {
+    describe('searchUsers (POST /employees/search)', () => {
         it('should call service.findAll with query arguments', async () => {
-            const query: FindAllUsersDto = { name: 'Test' };
+            const query: FindAllEmployeesDto = { name: 'Test' };
             await controller.searchUsers(query);
             expect(service.findAll).toHaveBeenCalledWith(query);
         });
     });
 
-    describe('findByID (GET /users/:id)', () => {
+    describe('findByID (GET /employees/:id)', () => {
         it('should call service.findByID with the provided id', async () => {
             const id = 'some-id';
             await controller.findByID(id);
@@ -61,7 +61,7 @@ describe('UsersController', () => {
         });
     });
 
-    describe('update (PATCH /users/:id)', () => {
+    describe('update (PATCH /employees/:id)', () => {
         it('should call service.update with id and dto', async () => {
             const id = 'some-id';
             const dto = { name: 'Updated' };
@@ -70,7 +70,7 @@ describe('UsersController', () => {
         });
     });
 
-    describe('remove (DELETE /users/:id)', () => {
+    describe('remove (DELETE /employees/:id)', () => {
         it('should call service.remove with the provided id', async () => {
             const id = 'some-id';
             await controller.remove(id);

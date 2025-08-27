@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigType } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UsersModule } from './users/users.module';
+import { EmployeesModule } from './employees/employees.module';
 import { appConfig } from './config/config';
 import { ProjectsModule } from './projects/projects.module';
 
@@ -19,12 +19,11 @@ import { ProjectsModule } from './projects/projects.module';
             }),
         }),
 
-        UsersModule,
+        EmployeesModule,
 
         ProjectsModule,
     ],
     controllers: [],
     providers: [],
 })
-
 export class AppModule {}

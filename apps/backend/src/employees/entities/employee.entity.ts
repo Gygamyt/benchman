@@ -3,20 +3,20 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { v4 as uuidv4 } from 'uuid';
 import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, IsUrl, IsUUID, MinLength } from 'class-validator';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-import { UserGrade, UserStatus, Workload } from './user.enums';
+import { EmployeeGrade, EmployeeStatus, Workload } from './employee.enums';
 import { Project } from '../../projects/entities/project.entity';
 
-export type UserDocument = HydratedDocument<User>;
+export type EmployeeDocument = HydratedDocument<Employee>;
 
 @Schema({ timestamps: true })
-export class User {
+export class Employee {
     @ApiProperty({ description: 'Уникальный ID пользователя', example: '65a034f3b2667181314f271f' })
     _id!: MongooseSchema.Types.ObjectId;
 
     @ApiProperty({ description: 'Уникальный идентификатор UUID', example: 'd1a6d7a0-9f3c-4a2b-8b1e-3a9f3d9f3d9f' })
     @Prop({ type: String, unique: true, default: uuidv4 })
     @IsUUID()
-    userId!: string;
+    employeeId!: string;
 
     @ApiProperty({ description: 'Имя пользователя', example: 'Иван Иванов' })
     @Prop({ required: true, trim: true, type: String, unique: true })
@@ -30,15 +30,15 @@ export class User {
     @IsNotEmpty()
     role!: string;
 
-    @ApiProperty({ description: 'Грейд пользователя', enum: UserGrade, example: UserGrade.MIDDLE })
-    @Prop({ required: true, enum: UserGrade, type: String })
-    @IsEnum(UserGrade)
-    grade!: UserGrade;
+    @ApiProperty({ description: 'Грейд пользователя', enum: EmployeeGrade, example: EmployeeGrade.MIDDLE })
+    @Prop({ required: true, enum: EmployeeGrade, type: String })
+    @IsEnum(EmployeeGrade)
+    grade!: EmployeeGrade;
 
-    @ApiProperty({ description: 'Текущий статус', enum: UserStatus, example: UserStatus.ON_BENCH })
-    @Prop({ required: true, enum: UserStatus, default: UserStatus.ON_BENCH, type: String })
-    @IsEnum(UserStatus)
-    status?: UserStatus;
+    @ApiProperty({ description: 'Текущий статус', enum: EmployeeStatus, example: EmployeeStatus.ON_BENCH })
+    @Prop({ required: true, enum: EmployeeStatus, default: EmployeeStatus.ON_BENCH, type: String })
+    @IsEnum(EmployeeStatus)
+    status?: EmployeeStatus;
 
     @ApiProperty()
     @Prop({ required: true, trim: true })
@@ -117,4 +117,4 @@ export class User {
     updatedAt!: Date;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const EmployeeSchema = SchemaFactory.createForClass(Employee);

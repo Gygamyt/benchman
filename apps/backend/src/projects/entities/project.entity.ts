@@ -12,7 +12,7 @@ import {
 } from 'class-validator';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
-import { User } from '../../users/entities/user.entity';
+import { Employee } from '../../employees/entities/employee.entity';
 import { ProjectDirection, ProjectStatus } from './project.enum';
 
 export type ProjectDocument = HydratedDocument<Project>;
@@ -66,9 +66,9 @@ export class Project {
     @IsOptional()
     endDate?: Date;
 
-    @ApiProperty({ type: () => [User] })
+    @ApiProperty({ type: () => [Employee] })
     @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'User' }] })
-    team!: User[];
+    team!: Employee[];
 
     @ApiProperty()
     @Prop({ trim: true, type: String })
