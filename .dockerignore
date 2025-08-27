@@ -3,6 +3,6 @@
 .idea
 *.DS_Store
 *.log
-apps/backend/.env
+.env
 .git
 /dist

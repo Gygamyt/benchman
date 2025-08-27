@@ -5,6 +5,7 @@ import { EmployeesModule } from './employees/employees.module';
 import { appConfig } from './config/config';
 import { ProjectsModule } from './projects/projects.module';
 import { RequestsModule } from './requests/requests.module';
+import { DictionaryModule } from './dictionary/dictionary.module';
 
 @Module({
     imports: [
@@ -25,6 +26,8 @@ import { RequestsModule } from './requests/requests.module';
         ProjectsModule,
 
         RequestsModule,
+
+        DictionaryModule,
     ],
     controllers: [],
     providers: [],
