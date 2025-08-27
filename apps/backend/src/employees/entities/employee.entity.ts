@@ -5,6 +5,7 @@ import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, IsUrl, Is
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { EmployeeGrade, EmployeeStatus, Workload } from './employee.enums';
 import { Project } from '../../projects/entities/project.entity';
+import { Request } from '../../requests/entities/request.entity';
 
 export type EmployeeDocument = HydratedDocument<Employee>;
 
@@ -109,6 +110,10 @@ export class Employee {
     @ApiProperty({ description: 'Project or projects', type: () => [Project], required: false })
     @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Project' }] })
     projects!: Project[];
+
+    @ApiProperty({ type: () => [Request], required: false })
+    @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Request' }] })
+    requests!: Request[];
 
     @ApiProperty()
     createdAt!: Date;

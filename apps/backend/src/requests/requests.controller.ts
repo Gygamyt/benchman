@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, HttpCode, HttpStatus, ParseBoolPipe } from '@nestjs/common';
 import { RequestsService } from './requests.service';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
-import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiParam, ApiPropertyOptional, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FindAllRequestsDto } from './dto/find-all-requests.dto';
 import { Request } from './entities/request.entity';
+import { AssignEmployeeDto } from './dto/assign-employee.dto';
 
 @ApiTags('requests')
 @Controller('requests')
@@ -34,9 +35,13 @@ export class RequestsController {
 
     @Get(':id')
     @ApiParam({ name: 'id', description: 'Request ID' })
+    @ApiPropertyOptional({ name: 'populate', type: Boolean, description: 'Populate related fields' })
     @ApiResponse({ status: 200, description: 'Returns a single request.', type: () => Request })
-    findOne(@Param('id') id: string) {
-        return this.requestsService.findOne(id);
+    findOne(
+        @Param('id') id: string,
+        @Query('populate', new ParseBoolPipe({ optional: true })) populate?: boolean,
+    ) {
+        return this.requestsService.findOne(id, populate);
     }
 
     @Patch(':id')
@@ -53,5 +58,29 @@ export class RequestsController {
     @ApiResponse({ status: 204, description: 'Request deleted.' })
     remove(@Param('id') id: string) {
         return this.requestsService.remove(id);
+    }
+
+    @Post(':requestId/employees')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({ status: 200, description: 'Assigns an employee to the request.' })
+    @ApiParam({ name: 'requestId', description: 'The ID of the request' })
+    @ApiBody({ type: AssignEmployeeDto })
+    assignEmployee(
+        @Param('requestId') requestId: string,
+        @Body() assignEmployeeDto: AssignEmployeeDto,
+    ) {
+        return this.requestsService.assignEmployee(requestId, assignEmployeeDto.employeeId);
+    }
+
+    @Delete(':requestId/employees/:employeeId')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @ApiResponse({ status: 204, description: 'Removes an employee from the request.' })
+    @ApiParam({ name: 'requestId', description: 'The ID of the request' })
+    @ApiParam({ name: 'employeeId', description: 'The ID of the employee' })
+    removeEmployee(
+        @Param('requestId') requestId: string,
+        @Param('employeeId') employeeId: string,
+    ) {
+        return this.requestsService.removeEmployee(requestId, employeeId);
     }
 }

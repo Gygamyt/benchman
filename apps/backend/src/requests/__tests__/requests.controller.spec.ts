@@ -62,10 +62,17 @@ describe('RequestsController', () => {
     });
 
     describe('findOne', () => {
-        it('should call service.findOne with an id', async () => {
+        it('should call service.findOne with id and populate flag', async () => {
             const id = 'some-id';
-            await controller.findOne(id);
-            expect(service.findOne).toHaveBeenCalledWith(id);
+            const populate = true;
+            await controller.findOne(id, populate);
+            expect(service.findOne).toHaveBeenCalledWith(id, populate);
+        });
+
+        it('should call service.findOne with id and no populate flag', async () => {
+            const id = 'some-id';
+            await controller.findOne(id, undefined);
+            expect(service.findOne).toHaveBeenCalledWith(id, undefined);
         });
     });
 });

@@ -16,6 +16,7 @@ import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 import { ProjectStatusByRequest, RequestStatus } from './request.enums';
 import { IsInDictionary } from '../../shared/validators/is-in-dictionary.validator';
+import { Employee } from '../../employees/entities/employee.entity';
 
 export type RequestDocument = HydratedDocument<Request>;
 
@@ -141,6 +142,10 @@ export class Request {
     @Prop({ type: String, enum: ProjectStatusByRequest, required: true, default: ProjectStatusByRequest.NOT_STARTED })
     @IsEnum(ProjectStatusByRequest)
     projectStatus!: ProjectStatusByRequest;
+
+    @ApiProperty({ type: () => [Employee], required: false })
+    @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Employee' }] })
+    assignedEmployees!: Employee[];
 
     @ApiProperty()
     createdAt!: Date;

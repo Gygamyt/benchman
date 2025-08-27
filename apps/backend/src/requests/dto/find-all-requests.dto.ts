@@ -1,6 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { ProjectStatusByRequest, RequestStatus } from '../entities/request.enums';
+import { Transform } from 'class-transformer';
 
 export class FindAllRequestsDto {
     @ApiPropertyOptional({ description: 'Найти реквесты по частичному совпадению имени' })
@@ -22,4 +23,13 @@ export class FindAllRequestsDto {
     @IsString()
     @IsOptional()
     grade?: string;
+
+    @ApiPropertyOptional({
+        description: 'Set to true to populate related entities (e.g., assignedEmployees)',
+        type: Boolean,
+    })
+    @IsBoolean()
+    @Transform(({ value }) => value === 'true' || value === true)
+    @IsOptional()
+    populate?: boolean;
 }
