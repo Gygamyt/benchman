@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { EmployeesModule } from './employees/employees.module';
 import { appConfig } from './config/config';
 import { ProjectsModule } from './projects/projects.module';
+import { RequestsModule } from './requests/requests.module';
 
 @Module({
     imports: [
@@ -22,6 +23,8 @@ import { ProjectsModule } from './projects/projects.module';
         EmployeesModule,
 
         ProjectsModule,
+
+        RequestsModule,
     ],
     controllers: [],
     providers: [],
