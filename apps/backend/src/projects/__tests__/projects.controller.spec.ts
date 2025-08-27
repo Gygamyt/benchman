@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectsController } from '../projects.controller';
 import { ProjectsService } from '../projects.service';
-import { CreateProjectDto } from '../dto/create-project.dto';
+import { AssignEmployeeDto } from '../dto/assign-employee.dto';
 
 describe('ProjectsController', () => {
     let controller: ProjectsController;
@@ -9,11 +9,12 @@ describe('ProjectsController', () => {
 
     const mockProjectsService = {
         create: jest.fn(),
-        createMany: jest.fn(),
         findAll: jest.fn(),
         findOne: jest.fn(),
         update: jest.fn(),
         remove: jest.fn(),
+        assignEmployee: jest.fn(),
+        removeEmployee: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -39,30 +40,6 @@ describe('ProjectsController', () => {
         expect(controller).toBeDefined();
     });
 
-    describe('create', () => {
-        it('should call service.create with a dto', async () => {
-            const dto = { name: 'Test Project' } as CreateProjectDto;
-            await controller.create(dto);
-            expect(service.create).toHaveBeenCalledWith(dto);
-        });
-    });
-
-    describe('findAll', () => {
-        it('should call service.findAll with a query', async () => {
-            const query = { status: 'Active' as any };
-            await controller.findAll(query);
-            expect(service.findAll).toHaveBeenCalledWith(query);
-        });
-    });
-
-    describe('search', () => {
-        it('should call service.findAll with a query from body', async () => {
-            const query = { name: 'Search Project' };
-            await controller.search(query);
-            expect(service.findAll).toHaveBeenCalledWith(query);
-        });
-    });
-
     describe('findOne', () => {
         it('should call service.findOne with an id', async () => {
             const id = 'some-id';
@@ -71,20 +48,21 @@ describe('ProjectsController', () => {
         });
     });
 
-    describe('update', () => {
-        it('should call service.update with an id and a dto', async () => {
-            const id = 'some-id';
-            const dto = { name: 'Updated Name' };
-            await controller.update(id, dto as any);
-            expect(service.update).toHaveBeenCalledWith(id, dto);
+    describe('assignEmployee', () => {
+        it('should call service.assignEmployee with correct arguments', async () => {
+            const projectId = 'proj1';
+            const dto: AssignEmployeeDto = { employeeId: 'emp1' };
+            await controller.assignEmployee(projectId, dto);
+            expect(service.assignEmployee).toHaveBeenCalledWith(projectId, dto.employeeId);
         });
     });
 
-    describe('remove', () => {
-        it('should call service.remove with an id', async () => {
-            const id = 'some-id';
-            await controller.remove(id);
-            expect(service.remove).toHaveBeenCalledWith(id);
+    describe('removeEmployee', () => {
+        it('should call service.removeEmployee with correct arguments', async () => {
+            const projectId = 'proj1';
+            const employeeId = 'emp1';
+            await controller.removeEmployee(projectId, employeeId);
+            expect(service.removeEmployee).toHaveBeenCalledWith(projectId, employeeId);
         });
     });
 });

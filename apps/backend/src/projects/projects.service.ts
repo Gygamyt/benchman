@@ -23,10 +23,7 @@ export class ProjectsService {
         });
 
         if (team && team.length > 0) {
-            await this.employeeModel.updateMany(
-                { _id: { $in: team } },
-                { $addToSet: { projects: createdProject._id } },
-            );
+            await this.employeeModel.updateMany({ _id: { $in: team } }, { $addToSet: { projects: createdProject._id } });
         }
 
         return createdProject.toObject();
@@ -72,11 +69,7 @@ export class ProjectsService {
         // todo POST /projects/:id/team, DELETE /projects/:id/team/:employeeId
         const { team, ...projectData } = updateProjectDto;
 
-        const updatedProject = await this.projectModel
-            .findByIdAndUpdate(id, projectData, { new: true })
-            .populate('team')
-            .lean()
-            .exec();
+        const updatedProject = await this.projectModel.findByIdAndUpdate(id, projectData, { new: true }).populate('team').lean().exec();
 
         if (!updatedProject) {
             throw new NotFoundException(`Project with ID "${id}" not found`);
@@ -92,10 +85,29 @@ export class ProjectsService {
         }
 
         if (projectToDelete.team && projectToDelete.team.length > 0) {
-            await this.employeeModel.updateMany(
-                { _id: { $in: projectToDelete.team } },
-                { $pull: { projects: projectToDelete._id } },
-            );
+            await this.employeeModel.updateMany({ _id: { $in: projectToDelete.team } }, { $pull: { projects: projectToDelete._id } });
         }
+    }
+
+    /**
+     * Assigns an employee to a project.
+     */
+    async assignEmployee(projectId: string, employeeId: string): Promise<void> {
+        const project = await this.projectModel.findById(projectId);
+        if (!project) throw new NotFoundException(`Project with ID "${projectId}" not found`);
+
+        const employee = await this.employeeModel.findById(employeeId);
+        if (!employee) throw new NotFoundException(`Employee with ID "${employeeId}" not found`);
+
+        await project.updateOne({ $addToSet: { team: employeeId } });
+        await employee.updateOne({ $addToSet: { projects: projectId } });
+    }
+
+    /**
+     * Removes an employee from a project.
+     */
+    async removeEmployee(projectId: string, employeeId: string): Promise<void> {
+        await this.projectModel.updateOne({ _id: projectId }, { $pull: { team: employeeId } });
+        await this.employeeModel.updateOne({ _id: employeeId }, { $pull: { projects: projectId } });
     }
 }

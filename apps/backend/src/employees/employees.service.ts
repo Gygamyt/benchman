@@ -6,12 +6,14 @@ import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Employee, EmployeeDocument } from './entities/employee.entity';
 import { FindAllEmployeesDto } from './dto/find-all-employees.dto';
 import { RequestsService } from '../requests/requests.service';
+import { ProjectsService } from '../projects/projects.service';
 
 @Injectable()
 export class EmployeesService {
     constructor(
         @InjectModel(Employee.name) private employeeModel: Model<EmployeeDocument>,
         private readonly requestsService: RequestsService,
+        private readonly projectsService: ProjectsService,
     ) {}
 
     /**
@@ -125,5 +127,13 @@ export class EmployeesService {
 
     async removeRequest(employeeId: string, requestId: string): Promise<void> {
         return this.requestsService.removeEmployee(requestId, employeeId);
+    }
+
+    async assignProject(employeeId: string, projectId: string): Promise<void> {
+        return this.projectsService.assignEmployee(projectId, employeeId);
+    }
+
+    async removeProject(employeeId: string, projectId: string): Promise<void> {
+        return this.projectsService.removeEmployee(projectId, employeeId);
     }
 }

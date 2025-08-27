@@ -18,6 +18,7 @@ import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Employee } from './entities/employee.entity';
 import { FindAllEmployeesDto } from './dto/find-all-employees.dto';
 import { AssignRequestDto } from './dto/assign-request.dto';
+import { AssignProjectDto } from './dto/assign-project.dto';
 
 @ApiTags('employees')
 @Controller('employees')
@@ -95,5 +96,25 @@ export class EmployeesController {
         @Param('requestId') requestId: string,
     ) {
         return this.employeesService.removeRequest(employeeId, requestId);
+    }
+
+    @Post(':employeeId/projects')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({ status: 200, description: 'Assigns a project to the employee.' })
+    assignProject(
+        @Param('employeeId') employeeId: string,
+        @Body() assignProjectDto: AssignProjectDto,
+    ) {
+        return this.employeesService.assignProject(employeeId, assignProjectDto.projectId);
+    }
+
+    @Delete(':employeeId/projects/:projectId')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @ApiResponse({ status: 204, description: 'Removes a project from the employee.' })
+    removeProject(
+        @Param('employeeId') employeeId: string,
+        @Param('projectId') projectId: string,
+    ) {
+        return this.employeesService.removeProject(employeeId, projectId);
     }
 }

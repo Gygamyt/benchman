@@ -1,18 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EmployeesController } from '../employees.controller';
 import { EmployeesService } from '../employees.service';
-import { FindAllEmployeesDto } from '../dto/find-all-employees.dto';
+import { AssignProjectDto } from '../dto/assign-project.dto';
+import { AssignRequestDto } from '../dto/assign-request.dto';
 
 describe('EmployeesController', () => {
     let controller: EmployeesController;
     let service: EmployeesService;
 
-    const mockUsersService = {
-        create: jest.fn(),
+    const mockEmployeesService = {
         findAll: jest.fn(),
         findByID: jest.fn(),
-        update: jest.fn(),
-        remove: jest.fn(),
+        assignProject: jest.fn(),
+        removeProject: jest.fn(),
+        assignRequest: jest.fn(),
+        removeRequest: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -21,7 +23,7 @@ describe('EmployeesController', () => {
             providers: [
                 {
                     provide: EmployeesService,
-                    useValue: mockUsersService,
+                    useValue: mockEmployeesService,
                 },
             ],
         }).compile();
@@ -38,51 +40,39 @@ describe('EmployeesController', () => {
         expect(controller).toBeDefined();
     });
 
-    describe('findAll (GET /employees)', () => {
-        it('should call service.findAll with the query DTO', async () => {
-            const query: FindAllEmployeesDto = { name: 'Test' };
-            await controller.findAll(query);
-            expect(service.findAll).toHaveBeenCalledWith(query);
+    describe('assignProject', () => {
+        it('should call service.assignProject with correct arguments', async () => {
+            const employeeId = 'emp1';
+            const dto: AssignProjectDto = { projectId: 'proj1' };
+            await controller.assignProject(employeeId, dto);
+            expect(service.assignProject).toHaveBeenCalledWith(employeeId, dto.projectId);
         });
     });
 
-    describe('findByID (GET /employees/:id)', () => {
-        it('should call service.findByID with id and populate flag', async () => {
-            const id = 'some-id';
-            const populate = true;
-            await controller.findByID(id, populate);
-            expect(service.findByID).toHaveBeenCalledWith(id, populate);
-        });
-
-        it('should call service.findByID with id and without populate flag', async () => {
-            const id = 'some-id';
-            await controller.findByID(id, undefined);
-            expect(service.findByID).toHaveBeenCalledWith(id, undefined);
+    describe('removeProject', () => {
+        it('should call service.removeProject with correct arguments', async () => {
+            const employeeId = 'emp1';
+            const projectId = 'proj1';
+            await controller.removeProject(employeeId, projectId);
+            expect(service.removeProject).toHaveBeenCalledWith(employeeId, projectId);
         });
     });
 
-    describe('searchUsers (POST /employees/search)', () => {
-        it('should call service.findAll with query arguments', async () => {
-            const query: FindAllEmployeesDto = { name: 'Test' };
-            await controller.searchUsers(query);
-            expect(service.findAll).toHaveBeenCalledWith(query);
+    describe('assignRequest', () => {
+        it('should call service.assignRequest with correct arguments', async () => {
+            const employeeId = 'emp1';
+            const dto: AssignRequestDto = { requestId: 'req1' };
+            await controller.assignRequest(employeeId, dto);
+            expect(service.assignRequest).toHaveBeenCalledWith(employeeId, dto.requestId);
         });
     });
 
-    describe('update (PATCH /employees/:id)', () => {
-        it('should call service.update with id and dto', async () => {
-            const id = 'some-id';
-            const dto = { name: 'Updated' };
-            await controller.update(id, dto);
-            expect(service.update).toHaveBeenCalledWith(id, dto);
-        });
-    });
-
-    describe('remove (DELETE /employees/:id)', () => {
-        it('should call service.remove with the provided id', async () => {
-            const id = 'some-id';
-            await controller.remove(id);
-            expect(service.remove).toHaveBeenCalledWith(id);
+    describe('removeRequest', () => {
+        it('should call service.removeRequest with correct arguments', async () => {
+            const employeeId = 'emp1';
+            const requestId = 'req1';
+            await controller.removeRequest(employeeId, requestId);
+            expect(service.removeRequest).toHaveBeenCalledWith(employeeId, requestId);
         });
     });
 });

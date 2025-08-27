@@ -5,6 +5,7 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Project } from './entities/project.entity';
 import { FindAllProjectsDto } from './dto/find-all-projects.dto';
+import { AssignEmployeeDto } from './dto/assign-employee.dto';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -53,5 +54,23 @@ export class ProjectsController {
     @ApiResponse({ status: 204, description: 'Project deleted.' })
     remove(@Param('id') id: string) {
         return this.projectsService.remove(id);
+    }
+
+    @Post(':projectId/employees')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({ status: 200, description: 'Assigns an employee to the project.' })
+    @ApiParam({ name: 'projectId', description: 'The ID of the project' })
+    @ApiBody({ type: AssignEmployeeDto })
+    assignEmployee(@Param('projectId') projectId: string, @Body() assignEmployeeDto: AssignEmployeeDto) {
+        return this.projectsService.assignEmployee(projectId, assignEmployeeDto.employeeId);
+    }
+
+    @Delete(':projectId/employees/:employeeId')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @ApiResponse({ status: 204, description: 'Removes an employee from the project.' })
+    @ApiParam({ name: 'projectId', description: 'The ID of the project' })
+    @ApiParam({ name: 'employeeId', description: 'The ID of the employee' })
+    removeEmployee(@Param('projectId') projectId: string, @Param('employeeId') employeeId: string) {
+        return this.projectsService.removeEmployee(projectId, employeeId);
     }
 }

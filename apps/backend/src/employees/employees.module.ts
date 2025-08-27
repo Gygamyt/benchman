@@ -4,9 +4,10 @@ import { EmployeesController } from './employees.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Employee, EmployeeSchema } from './entities/employee.entity';
 import { RequestsModule } from '../requests/requests.module';
+import { ProjectsModule } from '../projects/projects.module';
 
 @Module({
-    imports: [MongooseModule.forFeature([{ name: Employee.name, schema: EmployeeSchema }]), RequestsModule],
+    imports: [MongooseModule.forFeature([{ name: Employee.name, schema: EmployeeSchema }]), RequestsModule, ProjectsModule],
     controllers: [EmployeesController],
     providers: [EmployeesService],
 })

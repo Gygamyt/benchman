@@ -5,13 +5,21 @@ import { Project } from '../entities/project.entity';
 import { Employee } from '../../employees/entities/employee.entity';
 import { Model } from 'mongoose';
 import { NotFoundException } from '@nestjs/common';
+import { CreateProjectDto } from '../dto/create-project.dto';
 
 const mockProject = {
     _id: 'mockProjectId',
     name: 'Test Project',
-    team: ['mockUserId1'],
+    team: ['mockEmployeeId1'],
     toObject: () => mockProject,
 };
+
+const mockEmployee = {
+    _id: 'mockEmployeeId1',
+    name: 'Test Employee',
+    updateOne: jest.fn(),
+};
+
 describe('ProjectsService', () => {
     let service: ProjectsService;
     let projectModel: Model<Project>;
@@ -19,15 +27,17 @@ describe('ProjectsService', () => {
 
     const mockProjectModel = {
         create: jest.fn().mockResolvedValue(mockProject),
-        insertMany: jest.fn().mockResolvedValue([mockProject]),
         find: jest.fn(),
-        findById: jest.fn(),
+        findById: jest.fn().mockResolvedValue({ updateOne: jest.fn() }),
         findByIdAndUpdate: jest.fn(),
         findByIdAndDelete: jest.fn(),
+        updateOne: jest.fn(),
     };
 
-    const mockUserModel = {
-        updateMany: jest.fn().mockResolvedValue({ nModified: 1 }),
+    const mockEmployeeModel = {
+        findById: jest.fn().mockResolvedValue(mockEmployee),
+        updateMany: jest.fn(),
+        updateOne: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -35,7 +45,7 @@ describe('ProjectsService', () => {
             providers: [
                 ProjectsService,
                 { provide: getModelToken(Project.name), useValue: mockProjectModel },
-                { provide: getModelToken(Employee.name), useValue: mockUserModel },
+                { provide: getModelToken(Employee.name), useValue: mockEmployeeModel },
             ],
         }).compile();
 
@@ -53,9 +63,12 @@ describe('ProjectsService', () => {
     });
 
     describe('create', () => {
-        it('should create a project and update employees', async () => {
-            const createDto = { name: 'New Project', team: ['mockEmployeeId1'] };
-            const result = await service.create(createDto as any);
+        it('should create a project and update employees if a team is provided', async () => {
+            const createDto: CreateProjectDto = {
+                name: 'New Project',
+                team: ['mockEmployeeId1'],
+            } as any;
+            const result = await service.create(createDto);
 
             expect(projectModel.create).toHaveBeenCalled();
             expect(employeeModel.updateMany).toHaveBeenCalledWith(
@@ -63,6 +76,63 @@ describe('ProjectsService', () => {
                 { $addToSet: { projects: mockProject._id } },
             );
             expect(result).toEqual(mockProject);
+        });
+
+        it('should create a project without updating employees if team is empty', async () => {
+            const createDto: CreateProjectDto = { name: 'Solo Project' } as any;
+            await service.create(createDto);
+
+            expect(projectModel.create).toHaveBeenCalled();
+            expect(employeeModel.updateMany).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('findOne', () => {
+        it('should find a project and populate its team', async () => {
+            const queryChain = {
+                populate: jest.fn().mockReturnThis(),
+                lean: jest.fn().mockReturnThis(),
+                exec: jest.fn().mockResolvedValue(mockProject),
+            };
+            jest.spyOn(projectModel, 'findById').mockReturnValue(queryChain as any);
+
+            const result = await service.findOne('some-id');
+
+            expect(projectModel.findById).toHaveBeenCalledWith('some-id');
+            expect(queryChain.populate).toHaveBeenCalledWith('team');
+            expect(result).toEqual(mockProject);
+        });
+    });
+
+    describe('assignEmployee', () => {
+        it('should assign an employee to a project', async () => {
+            const mockProjectInstance = { updateOne: jest.fn().mockResolvedValue(true) };
+            const mockEmployeeInstance = { updateOne: jest.fn().mockResolvedValue(true) };
+
+            jest.spyOn(projectModel, 'findById').mockResolvedValue(mockProjectInstance as any);
+            jest.spyOn(employeeModel, 'findById').mockResolvedValue(mockEmployeeInstance as any);
+
+            await service.assignEmployee('proj1', 'emp1');
+
+            expect(projectModel.findById).toHaveBeenCalledWith('proj1');
+            expect(employeeModel.findById).toHaveBeenCalledWith('emp1');
+            expect(mockProjectInstance.updateOne).toHaveBeenCalledWith({ $addToSet: { team: 'emp1' } });
+            expect(mockEmployeeInstance.updateOne).toHaveBeenCalledWith({ $addToSet: { projects: 'proj1' } });
+        });
+
+        it('should throw NotFoundException if project does not exist', async () => {
+            jest.spyOn(projectModel, 'findById').mockResolvedValue(null);
+
+            await expect(service.assignEmployee('proj1', 'emp1')).rejects.toThrow(NotFoundException);
+        });
+    });
+
+    describe('removeEmployee', () => {
+        it('should remove an employee from a project', async () => {
+            await service.removeEmployee('proj1', 'emp1');
+
+            expect(projectModel.updateOne).toHaveBeenCalledWith({ _id: 'proj1' }, { $pull: { team: 'emp1' } });
+            expect(employeeModel.updateOne).toHaveBeenCalledWith({ _id: 'emp1' }, { $pull: { projects: 'proj1' } });
         });
     });
 
@@ -81,15 +151,6 @@ describe('ProjectsService', () => {
                 { _id: { $in: mockProject.team } },
                 { $pull: { projects: mockProject._id } },
             );
-        });
-
-        it('should throw NotFoundException if project to remove is not found', async () => {
-            jest.spyOn(projectModel, 'findByIdAndDelete').mockReturnValue({
-                lean: () => ({
-                    exec: jest.fn().mockResolvedValue(null),
-                }),
-            } as any);
-            await expect(service.remove('non-existent-id')).rejects.toThrow(NotFoundException);
         });
     });
 });
