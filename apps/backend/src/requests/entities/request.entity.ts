@@ -12,11 +12,12 @@ import {
     ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { Schema as MongooseSchema } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 import { ProjectStatusByRequest, RequestStatus } from './request.enums';
 import { IsInDictionary } from '../../shared/validators/is-in-dictionary.validator';
 
+export type RequestDocument = HydratedDocument<Request>;
 
 class StaffingInfo {
     @ApiProperty()
