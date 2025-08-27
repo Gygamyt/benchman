@@ -9,9 +9,7 @@ import * as path from 'path';
 export class DictionaryService implements OnModuleInit {
     private readonly logger = new Logger(DictionaryService.name);
 
-    constructor(
-        @InjectModel(Dictionary.name) private dictionaryModel: Model<Dictionary>,
-    ) {}
+    constructor(@InjectModel(Dictionary.name) private dictionaryModel: Model<Dictionary>) {}
 
     /**
      * NestJS lifecycle hook that runs once the module has been initialized.
@@ -19,7 +17,7 @@ export class DictionaryService implements OnModuleInit {
      */
     async onModuleInit() {
         try {
-            const seedDataPath = path.join(process.cwd(), 'seed-data');
+            const seedDataPath = path.join(process.cwd(), '..', '..', 'seed-data');
             const files = await fs.readdir(seedDataPath);
 
             for (const file of files) {

@@ -12,6 +12,7 @@ services:
     volumes:
       - ./apps/backend/src:/usr/src/app/apps/backend/src
       - ./packages:/usr/src/app/packages
+      - ./seed-data:/usr/src/app/seed-data
     depends_on:
       - mongo
       - redis
