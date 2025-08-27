@@ -1,23 +1,22 @@
 import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import {
     IsArray,
     IsBoolean,
     IsEnum,
     IsNotEmpty,
     IsNumber,
-    IsOptional,
     IsString,
     IsUUID,
     Min,
     ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
+import { Schema as MongooseSchema } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 import { ProjectStatusByRequest, RequestStatus } from './request.enums';
+import { IsInDictionary } from '../../shared/validators/is-in-dictionary.validator';
 
-// --- Вложенные классы для группировки полей ---
 
 class StaffingInfo {
     @ApiProperty()
@@ -35,6 +34,7 @@ class LocationInfo {
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
+    @IsInDictionary('locations')
     name!: string;
 
     @ApiProperty()
@@ -75,8 +75,6 @@ export class Request {
     @IsString()
     @IsNotEmpty()
     name!: string;
-
-    // --- Группировка в "JSON"-объекты ---
 
     @ApiProperty({ description: 'Мета-информация из raw запроса' })
     @Prop(raw({
@@ -122,15 +120,16 @@ export class Request {
     @Prop({ type: [String] })
     @IsArray()
     @IsString({ each: true })
+    @IsInDictionary('technologies', { each: true })
     technologies!: string[];
 
     @ApiProperty({ type: [String] })
     @Prop({ type: [String] })
     @IsArray()
     @IsString({ each: true })
+    @IsInDictionary('skills', { each: true })
     skills!: string[];
 
-    // --- Статусы ---
 
     @ApiProperty({ enum: RequestStatus })
     @Prop({ type: String, enum: RequestStatus, required: true, default: RequestStatus.OPEN })

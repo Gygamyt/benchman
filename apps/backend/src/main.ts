@@ -4,10 +4,12 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { env } from './config/config';
+import { useContainer } from 'class-validator';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     const port = env.APP_PORT
+    useContainer(app.select(AppModule), { fallbackOnErrors: true });
     app.useGlobalPipes(
         new ValidationPipe({
             whitelist: true,

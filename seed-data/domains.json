@@ -1,0 +1,66 @@
+[
+  {
+    "name": "finance",
+    "subValues": [
+      "Fintech",
+      "Banking",
+      "Trading",
+      "Online Trading",
+      "Finance",
+      "Investment Business"
+    ]
+  },
+  {
+    "name": "business_models",
+    "subValues": [
+      "B2B",
+      "B2C",
+      "PaaS",
+      "SaaS",
+      "Middleware"
+    ]
+  },
+  {
+    "name": "hr_tech",
+    "subValues": [
+      "Skills Management",
+      "Workforce Enablement",
+      "HR Tech",
+      "Future of Work"
+    ]
+  },
+  {
+    "name": "security",
+    "subValues": [
+      "Cybersecurity",
+      "Access Management"
+    ]
+  },
+  {
+    "name": "industries",
+    "subValues": [
+      "E-commerce",
+      "Geo Data",
+      "Pharmaceutical",
+      "Automotive",
+      "Energy industry",
+      "Healthcare",
+      "Gaming"
+    ]
+  },
+  {
+    "name": "other",
+    "subValues": [
+      "IT-Asset Management",
+      "Mobile Device Management",
+      "Messenger",
+      "Business Analysis",
+      "Customer Experience",
+      "CX",
+      "Auto-ordering",
+      "Management Simulation",
+      "Astrology",
+      "Generative AI"
+    ]
+  }
+]

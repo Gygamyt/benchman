@@ -1,0 +1,52 @@
+[
+  {
+    "name": "development",
+    "subValues": [
+      "Developer",
+      "Fullstack Software Developer in Test"
+    ]
+  },
+  {
+    "name": "quality_assurance",
+    "subValues": [
+      "QA Engineer",
+      "Automation QA",
+      "AQA",
+      "Test Automation Engineer",
+      "Automation Tester",
+      "Manual QA",
+      "Manual QA Engineer",
+      "Fullstack QA",
+      "Backend QA",
+      "Mobile QA Tester",
+      "Tester",
+      "SDET"
+    ]
+  },
+  {
+    "name": "qa_management",
+    "subValues": [
+      "Test Lead",
+      "Automation Infrastructure Technical Lead",
+      "Hands-on Lead"
+    ]
+  },
+  {
+    "name": "analysis_and_specialized",
+    "subValues": [
+      "Business Analyst",
+      "Test Analyst",
+      "Macro Specialist",
+      "Scraper Specialist"
+    ]
+  },
+  {
+    "name": "security_and_ops",
+    "subValues": [
+      "Penetration Tester",
+      "IT Security Specialist",
+      "TestOps",
+      "DevOps"
+    ]
+  }
+]

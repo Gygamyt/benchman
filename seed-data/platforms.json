@@ -1,0 +1,51 @@
+[
+  {
+    "name": "desktop_os",
+    "subValues": [
+      "Windows",
+      "Linux",
+      "macOS",
+      "Unix"
+    ]
+  },
+  {
+    "name": "mobile_os",
+    "subValues": [
+      "iOS",
+      "Android",
+      "Mobile"
+    ]
+  },
+  {
+    "name": "gaming_consoles",
+    "subValues": [
+      "Xbox",
+      "PlayStation",
+      "PS4",
+      "PS5",
+      "Nintendo Switch"
+    ]
+  },
+  {
+    "name": "web",
+    "subValues": [
+      "Web"
+    ]
+  },
+  {
+    "name": "hardware",
+    "subValues": [
+      "PC",
+      "Mac",
+      "Raspberry Pi"
+    ]
+  },
+  {
+    "name": "enterprise",
+    "subValues": [
+      "Mainframe",
+      "z/OS",
+      "VDI"
+    ]
+  }
+]

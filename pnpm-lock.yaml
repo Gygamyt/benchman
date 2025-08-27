@@ -75,6 +75,9 @@ importers:
       class-validator:
         specifier: ^0.14.2
         version: 0.14.2
+      class-validator-nestjs:
+        specifier: ^0.15.5
+        version: 0.15.5
       mongoose:
         specifier: ^8.18.0
         version: 8.18.0
@@ -1482,6 +1485,9 @@ packages:
 
   class-transformer@0.5.1:
     resolution: {integrity: sha512-SQa1Ws6hUbfC98vKGxZH3KFY0Y1lm5Zm0SY8XX9zbK7FJCyVEac3ATW0RIpwzW+oOfmHE5PMPufDG9hCfoEOMw==}
+
+  class-validator-nestjs@0.15.5:
+    resolution: {integrity: sha512-iDg9Bi+Ax3+98g2Mr3i5f2tlMj78/i1Q3RrUNvmMbEAglMYKglTKb12njk4A68LnoJebFMyDogHXNLmb/TXIIQ==}
 
   class-validator@0.14.2:
     resolution: {integrity: sha512-3kMVRF2io8N8pY1IFIXlho9r8IPUUIfHe2hYVtiebvAzU2XeQFXTv+XI4WX+TnXmtwXMDcjngcpkiPM0O9PvLw==}
@@ -5273,6 +5279,12 @@ snapshots:
   cjs-module-lexer@1.4.3: {}
 
   class-transformer@0.5.1: {}
+
+  class-validator-nestjs@0.15.5:
+    dependencies:
+      '@types/validator': 13.15.2
+      libphonenumber-js: 1.12.13
+      validator: 13.15.15
 
   class-validator@0.14.2:
     dependencies:

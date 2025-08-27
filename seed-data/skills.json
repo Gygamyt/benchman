@@ -1,0 +1,145 @@
+[
+  {
+    "name": "testing_types",
+    "subValues": [
+      "Functional Testing",
+      "Non-functional testing",
+      "Performance Testing",
+      "Security Testing",
+      "Penetration Testing",
+      "Vulnerability Assessment",
+      "Regression Testing",
+      "Localization Testing",
+      "Mainframe Testing",
+      "UAT (User Acceptance Testing)",
+      "Smoke testing",
+      "UI Testing",
+      "API Testing",
+      "Backend Testing",
+      "Frontend Testing",
+      "DB Testing",
+      "Unit Testing",
+      "E2E Testing",
+      "Exploratory Testing",
+      "Continuous Testing",
+      "Greybox Testing",
+      "Black-box testing",
+      "Desktop Application Testing",
+      "Mobile Application Testing"
+    ]
+  },
+  {
+    "name": "methodologies_and_processes",
+    "subValues": [
+      "Agile",
+      "Scrum",
+      "Agile QA",
+      "Sprint Testing",
+      "BDD",
+      "TDD",
+      "OOP",
+      "Risk-based testing",
+      "Shift Left Testing",
+      "QA Process",
+      "QA Strategy",
+      "QA Methodologies",
+      "SDLC",
+      "Development Lifecycle",
+      "DoD (Definition of Done)",
+      "ISTQB"
+    ]
+  },
+  {
+    "name": "automation_and_infra",
+    "subValues": [
+      "Test Automation",
+      "CI/CD",
+      "IaC (Infrastructure as Code)",
+      "Automation Roadmap",
+      "Automation Patterns"
+    ]
+  },
+  {
+    "name": "architecture_and_design",
+    "subValues": [
+      "Microservices",
+      "DDD (Domain-Driven Design)",
+      "CQRS",
+      "Event Sourcing",
+      "Test Architecture"
+    ]
+  },
+  {
+    "name": "data_and_db",
+    "subValues": [
+      "SQL",
+      "DML",
+      "Relational Databases",
+      "Data Contracts",
+      "EDIFACT"
+    ]
+  },
+  {
+    "name": "management_and_analysis",
+    "subValues": [
+      "Test coordination",
+      "Test Management",
+      "Defect Tracking",
+      "RCA (Root Cause Analysis)",
+      "Test Design",
+      "Test Specifications",
+      "Acceptance Criteria",
+      "Business Requirements Analysis",
+      "Test Documentation"
+    ]
+  },
+  {
+    "name": "technical_skills",
+    "subValues": [
+      "REST API",
+      "GraphQL",
+      "HTTP",
+      "API Integration",
+      "Message Queues",
+      "MQ",
+      "Message Brokers",
+      "XSS",
+      "SQLi",
+      "Scraping",
+      "GUI Automation",
+      "DOM Navigation",
+      "XPath",
+      "CSS Selectors",
+      "Software Packaging",
+      "Linting",
+      "Mess Detection",
+      "Bug fixing",
+      "Debugging",
+      "Mock Services",
+      "Cross-platform compatibility",
+      "Code Review"
+    ]
+  },
+  {
+    "name": "ai_and_ml",
+    "subValues": [
+      "Machine Learning",
+      "ML",
+      "LLM",
+      "LLM prompt engineering",
+      "Bias detection",
+      "Data Validation",
+      "Predictive Modeling",
+      "Sentiment Analysis"
+    ]
+  },
+  {
+    "name": "other",
+    "subValues": [
+      "IT Asset Management",
+      "MDM (Mobile Device Management)",
+      "IT Security",
+      "Mentoring"
+    ]
+  }
+]

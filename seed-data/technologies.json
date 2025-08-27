@@ -1,0 +1,222 @@
+[
+  {
+    "name": "languages",
+    "subValues": [
+      "Java",
+      "C#",
+      "C++",
+      "Python",
+      "JavaScript",
+      "TypeScript",
+      "Go",
+      "Kotlin",
+      "Swift",
+      "Groovy",
+      "Delphi",
+      "PL/SQL"
+    ]
+  },
+  {
+    "name": "frameworks",
+    "subValues": [
+      "Spring",
+      "Spring Boot",
+      "Micronaut",
+      "GraalVM",
+      "Node.js",
+      "React",
+      "Angular",
+      "Vue.js",
+      "JUnit",
+      "TestNG",
+      "PyTest",
+      "Robot Framework",
+      "Selenide",
+      "Cucumber",
+      "Selenium",
+      "Appium",
+      "Cypress",
+      "CodeceptJS",
+      "Jest",
+      "Mocha",
+      "Chai",
+      "Allure Reports",
+      "RestAssured",
+      "Wiremock",
+      "TestComplete",
+      "Testomat"
+    ]
+  },
+  {
+    "name": "databases",
+    "subValues": [
+      "PostgreSQL",
+      "MySQL",
+      "MS SQL",
+      "MongoDB",
+      "Redis",
+      "NoSQL",
+      "DB2",
+      "Relational Databases",
+      "InfluxDB"
+    ]
+  },
+  {
+    "name": "cloud_and_devops",
+    "subValues": [
+      "AWS",
+      "AWS RDS",
+      "AWS EKS",
+      "Azure DevOps",
+      "Google Cloud Platform",
+      "GCP",
+      "Jenkins",
+      "GitHub Actions",
+      "GitLab CI/CD",
+      "GitLab",
+      "Bamboo",
+      "Bitbucket",
+      "GitlabCI",
+      "Openshift",
+      "Helm",
+      "Terraform",
+      "CloudFormation",
+      "Docker",
+      "Kubernetes",
+      "VMware Horizon",
+      "OpenStack",
+      "Hazelcast",
+      "Prometheus",
+      "Grafana",
+      "Allure Reports",
+      "Octopus"
+    ]
+  },
+  {
+    "name": "messaging_and_integration",
+    "subValues": [
+      "Kafka",
+      "RabbitMQ",
+      "ActiveMQ",
+      "ActiveMQ Artemis",
+      "JMS",
+      "Mulesoft",
+      "Service Workers",
+      "GRPC",
+      "WebSocket",
+      "OpenLens",
+      "OpenSearch"
+    ]
+  },
+  {
+    "name": "testing_tools",
+    "subValues": [
+      "Postman",
+      "Insomnia",
+      "SoapUI",
+      "JMeter",
+      "ArtilleryIO",
+      "Artillery",
+      "Locust",
+      "SuperTest",
+      "Fiddler",
+      "Charles Proxy",
+      "Charles",
+      "Swagger",
+      "TestRail",
+      "Zephyr",
+      "Linear",
+      "Testomat",
+      "Wiremock",
+      "Allure Reports",
+      "Apptimized"
+    ]
+  },
+  {
+    "name": "bi_and_reporting",
+    "subValues": [
+      "Power BI",
+      "QuickSight",
+      "SharePoint",
+      "Databricks",
+      "Confluence",
+      "Amplitude",
+      "Appsflyer",
+      "AppMetrica",
+      "Mosaic Orchestrator",
+      "Powercloud",
+      "Float",
+      "Tempo"
+    ]
+  },
+  {
+    "name": "dev_tools",
+    "subValues": [
+      "Visual Studio Code",
+      "IntelliJ IDEA",
+      "Android Studio",
+      "PLSQL Developer",
+      "Direct Oracle Access",
+      "Developer Express Suite",
+      "xCode",
+      "Miro",
+      "Figma"
+    ]
+  },
+  {
+    "name": "automation_and_office",
+    "subValues": [
+      "Automation Anywhere",
+      "UIPath",
+      "SikuliX",
+      "AutoHotkey",
+      "Microsoft Power Automate",
+      "MSI",
+      "MSIX",
+      "App-V",
+      "Intune"
+    ]
+  },
+  {
+    "name": "network_and_security",
+    "subValues": [
+      "Wireshark",
+      "Metasploit",
+      "Burp Suite",
+      "Nmap",
+      "OAuth",
+      "SAML",
+      "Active Directory",
+      "SyHunt",
+      "SAP",
+      "SAP GRC",
+      "SAP IDM",
+      "Citrix"
+    ]
+  },
+  {
+    "name": "cms",
+    "subValues": [
+      "Drupal",
+      "Magento",
+      "Umbraco"
+    ]
+  },
+  {
+    "name": "other",
+    "subValues": [
+      "Chrome DevTools",
+      "BeautifulSoup",
+      "lxml",
+      "Puppeteer",
+      "YAML",
+      "XML Tools",
+      "Gherkin",
+      "Studio",
+      "OpenAI",
+      "Adaptavist",
+      "Trino",
+      "Airflow"
+    ]
+  }
+]
