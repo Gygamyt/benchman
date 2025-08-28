@@ -6,12 +6,14 @@ import { UpdateRequestDto } from './dto/update-request.dto';
 import { Request, RequestDocument } from './entities/request.entity';
 import { FindAllRequestsDto } from './dto/find-all-requests.dto';
 import { Employee, EmployeeDocument } from '../employees/entities/employee.entity';
+import { Project, ProjectDocument } from '../projects/entities/project.entity';
 
 @Injectable()
 export class RequestsService {
     constructor(
         @InjectModel(Request.name) private requestModel: Model<RequestDocument>,
         @InjectModel(Employee.name) private employeeModel: Model<EmployeeDocument>,
+        @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
     ) {}
 
     async create(createRequestDto: CreateRequestDto): Promise<Request> {
@@ -104,5 +106,27 @@ export class RequestsService {
 
         await request.updateOne({ $addToSet: { assignedEmployees: employeeId } });
         await employee.updateOne({ $addToSet: { requests: requestId } });
+    }
+
+    /**
+     * Links a project to a request.
+     */
+    async assignProject(requestId: string, projectId: string): Promise<void> {
+        const request = await this.requestModel.findById(requestId);
+        if (!request) throw new NotFoundException(`Request with ID "${requestId}" not found`);
+
+        const project = await this.projectModel.findById(projectId);
+        if (!project) throw new NotFoundException(`Project with ID "${projectId}" not found`);
+
+        await request.updateOne({ $addToSet: { linkedProjects: projectId } });
+        await project.updateOne({ $addToSet: { sourceRequests: requestId } });
+    }
+
+    /**
+     * Unlinks a project from a request.
+     */
+    async removeProject(requestId: string, projectId: string): Promise<void> {
+        await this.requestModel.updateOne({ _id: requestId }, { $pull: { linkedProjects: projectId } });
+        await this.projectModel.updateOne({ _id: projectId }, { $pull: { sourceRequests: requestId } });
     }
 }

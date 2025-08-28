@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
     IsArray,
     IsDate,
@@ -97,6 +97,10 @@ export class Project {
     @IsArray()
     @IsString({ each: true })
     requestDescription!: string[];
+
+    @ApiPropertyOptional({ type: () => [Request] })
+    @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Request' }] })
+    requests!: Request[];
 
     @ApiProperty()
     createdAt!: Date;

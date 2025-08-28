@@ -6,6 +6,7 @@ import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Project } from './entities/project.entity';
 import { FindAllProjectsDto } from './dto/find-all-projects.dto';
 import { AssignEmployeeDto } from './dto/assign-employee.dto';
+import { AssignRequestDto } from './dto/assign-request.dto';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -72,5 +73,25 @@ export class ProjectsController {
     @ApiParam({ name: 'employeeId', description: 'The ID of the employee' })
     removeEmployee(@Param('projectId') projectId: string, @Param('employeeId') employeeId: string) {
         return this.projectsService.removeEmployee(projectId, employeeId);
+    }
+
+    @Post(':projectId/requests')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({ status: 200, description: 'Links a request to the project.' })
+    assignRequest(
+        @Param('projectId') projectId: string,
+        @Body() assignRequestDto: AssignRequestDto,
+    ) {
+        return this.projectsService.assignRequest(projectId, assignRequestDto.requestId);
+    }
+
+    @Delete(':projectId/requests/:requestId')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @ApiResponse({ status: 204, description: 'Unlinks a request from the project.' })
+    removeRequest(
+        @Param('projectId') projectId: string,
+        @Param('requestId') requestId: string,
+    ) {
+        return this.projectsService.removeRequest(projectId, requestId);
     }
 }

@@ -17,6 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ProjectStatusByRequest, RequestStatus } from './request.enums';
 import { IsInDictionary } from '../../shared/validators/is-in-dictionary.validator';
 import { Employee } from '../../employees/entities/employee.entity';
+import { Project } from '../../projects/entities/project.entity';
 
 export type RequestDocument = HydratedDocument<Request>;
 
@@ -146,6 +147,10 @@ export class Request {
     @ApiProperty({ type: () => [Employee], required: false })
     @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Employee' }] })
     assignedEmployees!: Employee[];
+
+    @ApiProperty({ type: () => Project })
+    @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Project', required: true })
+    project!: Project;
 
     @ApiProperty()
     createdAt!: Date;

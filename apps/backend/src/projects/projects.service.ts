@@ -6,12 +6,16 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project, ProjectDocument } from './entities/project.entity';
 import { Employee, EmployeeDocument } from '../employees/entities/employee.entity';
 import { FindAllProjectsDto } from './dto/find-all-projects.dto';
+import { RequestDocument } from '../requests/entities/request.entity';
+import { RequestsService } from '../requests/requests.service';
 
 @Injectable()
 export class ProjectsService {
     constructor(
         @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
         @InjectModel(Employee.name) private employeeModel: Model<EmployeeDocument>,
+        @InjectModel(Request.name) private requestModel: Model<RequestDocument>,
+        private readonly requestsService: RequestsService,
     ) {}
 
     async create(createProjectDto: CreateProjectDto): Promise<Project> {
@@ -109,5 +113,13 @@ export class ProjectsService {
     async removeEmployee(projectId: string, employeeId: string): Promise<void> {
         await this.projectModel.updateOne({ _id: projectId }, { $pull: { team: employeeId } });
         await this.employeeModel.updateOne({ _id: employeeId }, { $pull: { projects: projectId } });
+    }
+
+    async assignRequest(projectId: string, requestId: string): Promise<void> {
+        return this.requestsService.assignProject(requestId, projectId);
+    }
+
+    async removeRequest(projectId: string, requestId: string): Promise<void> {
+        return this.requestsService.removeProject(requestId, projectId);
     }
 }
